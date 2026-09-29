@@ -97,9 +97,9 @@ export const wedding = {
     date: "2026-11-13",
     displayDate: "Friday, 13th November 2026",
     shortDate: "13 NOV",
-    startTime: "04:00",
+    startTime: "04:30",
     endTime: "06:00",
-    displayTime: "4:00 AM – 6:00 AM",
+    displayTime: "4:30 AM – 6:00 AM",
     description: "The marriage ceremony",
     venue: "Kandamakudiyan Kanjivanam Karuppusamy Temple",
     address: "8RC8+Q2P, Madathukuppam, Tamil Nadu 609101",
@@ -176,7 +176,7 @@ export const wedding = {
     hub: "Sirkazhi (Sirkali)",
     village: "Thandavankulam",
     arriveNote:
-      "The wedding begins at 4:00 AM on 13 November. Guests travelling from afar are requested to arrive by the evening of 12 November.",
+      "The wedding begins at 4:30 AM on 13 November. Guests travelling from afar are requested to arrive by the evening of 12 November.",
     lastMile: [
       "Thandavankulam is about 17 km from Sirkazhi, on the Puthur – Pazhayar Road.",
       "Auto-rickshaws and taxis are available at Sirkazhi bus stand and railway station.",
