@@ -36,6 +36,25 @@ on an animated royal stage whose colours follow the chosen theme. To use a
 new photo, replace the files with the same names. Use a transparent WebP or
 PNG for the cutouts (remove.bg or `rembg` can make one).
 
+## Phone view everywhere
+
+The invitation is designed for phones. On a laptop or desktop browser, the same
+phone layout is shown in a centred, framed column on a royal velvet backdrop,
+with the couple's names and wedding details on the sides.
+
+## Our Moments, The Royal Wedding & Venues
+
+- **Our Moments**: an animated photo slideshow (auto-plays, swipe or tap the
+  thumbnails). Photos are listed in `gallery` in `src/config/wedding.js`.
+  Photo credit: Leaf9Studios.
+- **The Royal Wedding**: an animated cartoon scene. A cartoon groom and bride
+  walk into a royal mandapam, exchange garlands, hearts float up, and decorated
+  temple elephants raise their trunks under royal umbrellas while flowers
+  shower down (14-second loop).
+- **Venues**: illustrated cards (temple at pre-dawn, hall at sunrise, evening
+  reception) with date, time, address, a map that loads when scrolled to, and
+  directions.
+
 ## Royal themes
 
 Four palettes: **Maharaja Maroon** (default), **Royal Emerald**,
@@ -51,17 +70,41 @@ other themes. Their choice is remembered on their own phone only. Set it to
 `false` to lock everyone to your default. The colours are defined in
 `src/index.css` under `[data-theme=…]`.
 
-## C. How to add music
+## C. Music
 
-Put the file here:
+Four **original instrumentals** (composed and synthesised for this
+invitation, so there are no copyright problems) are **bundled into the build**
+from `src/assets/music/`. They always ship with the site; no separate folder
+needs uploading.
 
-```text
-public/music/wedding.mp3
-```
+| Track | Instruments | Raga |
+|---|---|---|
+| Mangala Isai | nadaswaram-style reed, thavil, tanpura | Mohanam |
+| Vidiyal Veena | veena-style plucks, mridangam, tanpura | Hamsadhwani |
+| Bansuri Procession | bansuri-style flute, tabla, tanpura | Hindolam |
+| Santoor Evening | santoor-style strings, tabla, tanpura | Kalyani |
 
-Music never autoplays. Guests tap the floating button (bottom-right) to turn
-it on or off. If the file is missing, the button quietly disappears and the
-site keeps working. To remove music entirely, set `music.enabled: false`.
+- Music **starts when the guest taps "Open Invitation"**. Turn this off with
+  `music.playOnOpen: false`. It never plays on page load.
+- The player (bottom-right) has play / pause, previous / next, and a track list
+  (tap the track name). Phones also show lock-screen controls.
+- If no audio file can play (blocked network, very old phone), a **live veena
+  piece is generated in the browser**, so the music button always works.
+
+**Add your own songs** (these play first):
+- Easiest: copy the MP3 into `public/music/` and list it in `src/config/wedding.js`:
+  `{ title: "Our song", subtitle: "Nadaswaram", src: "/music/our-song.mp3" }`
+- Or bundle it: copy it into `src/assets/music/` and add it in `src/config/music.js`.
+
+Only use music you have the right to share.
+
+### "Music not found" / blank page?
+Browsers **do not run this site from a file on your disk**. Double-clicking
+`index.html` or `dist/index.html` will not work (a notice is shown).
+Always open it through a web address:
+- `npm run dev` → open http://localhost:5173
+- or `npm run build` then `npm run preview` → open http://localhost:4173
+- or deploy it (Vercel / Netlify) and open that link.
 
 ## D. Where to change wedding information
 

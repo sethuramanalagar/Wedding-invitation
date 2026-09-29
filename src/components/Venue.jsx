@@ -1,7 +1,8 @@
-import { useState } from "react";
-import { Map as MapIcon, MapPin, Navigation, Route } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { CalendarDays, Clock, Map as MapIcon, MapPin, Navigation, Route, Sparkles as SparkIcon } from "lucide-react";
 import { wedding } from "../config/wedding.js";
 import { KolamDivider } from "./Ornaments.jsx";
+import { HallArt, ReceptionArt, TempleArt } from "./VenueArt.jsx";
 
 /* ── Google Maps link helpers (no API key needed) ─────────── */
 export const mapsDirections = ({ origin = "", destination, mode = "" }) => {
@@ -60,10 +61,25 @@ export function VenueLines({ event }) {
   );
 }
 
-/** Lightweight map: the Google iframe loads only when the guest asks. */
+/** Map that loads automatically when scrolled near (tap fallback). */
 function MapEmbed({ event }) {
   const [show, setShow] = useState(false);
+  const ref = useRef(null);
   const query = placeQuery(event);
+  useEffect(() => {
+    if (!event.venue || show || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setShow(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px 0px" },
+    );
+    if (ref.current) io.observe(ref.current);
+    return () => io.disconnect();
+  }, [event.venue, show]);
   if (!event.venue) return null;
   return show ? (
     <div className="map-embed">
@@ -76,17 +92,17 @@ function MapEmbed({ event }) {
       />
     </div>
   ) : (
-    <button type="button" className="map-embed map-embed--idle" onClick={() => setShow(true)}>
+    <button ref={ref} type="button" className="map-embed map-embed--idle" onClick={() => setShow(true)}>
       <MapIcon size={22} strokeWidth={1.4} aria-hidden="true" />
-      <span>Tap to show map</span>
+      <span>Show map</span>
     </button>
   );
 }
 
 const VENUES = [
-  { key: "reception", label: "Reception" },
-  { key: "marriage", label: "The Wedding" },
-  { key: "postWedding", label: "Post-Wedding" },
+  { key: "marriage", label: "The Wedding · Temple", Art: TempleArt },
+  { key: "postWedding", label: "Celebrations & Feast · Hall", Art: HallArt },
+  { key: "reception", label: "Reception", Art: ReceptionArt },
 ];
 
 export default function Venue() {
@@ -106,34 +122,60 @@ export default function Venue() {
         <KolamDivider className="reveal" />
 
         <div className="venues__grid">
-          {VENUES.map(({ key, label }) => {
+          {VENUES.map(({ key, label, Art }) => {
             const event = wedding[key];
             return (
               <article
-                className={`venue-card reveal ${key === "marriage" ? "venue-card--featured" : ""}`}
+                className={`venue-card venue-card--${key} reveal ${key === "marriage" ? "venue-card--featured" : ""}`}
                 key={key}
               >
-                <p className="venue-card__label">{label}</p>
-                <p className="venue-card__when">
-                  {event.shortDate} · {event.displayTime}
-                </p>
-                <MapPin className="venue-card__pin" size={20} strokeWidth={1.4} aria-hidden="true" />
-                <VenueLines event={event} />
-                <MapEmbed event={event} />
-                {event.venue && (
-                  <div className="venue-card__actions">
-                    <MapsButton event={event} />
-                    <a
-                      className="btn btn--ghost btn--sm"
-                      href={mapsDirections({ destination: placeQuery(event) })}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Navigation size={15} strokeWidth={1.6} aria-hidden="true" />
-                      Get directions
-                    </a>
-                  </div>
-                )}
+                <div className="venue-card__art">
+                  <Art />
+                  <p className="venue-card__label">{label}</p>
+                </div>
+                <div className="venue-card__body">
+                  <h3 className="venue-card__name">{event.venue || "Venue to be announced"}</h3>
+                  {event.location && event.venue && <p className="venue-card__place">{event.location}</p>}
+                  <ul className="venue-facts">
+                    <li>
+                      <CalendarDays size={16} strokeWidth={1.6} aria-hidden="true" />
+                      <span>{event.displayDate}</span>
+                    </li>
+                    <li>
+                      <Clock size={16} strokeWidth={1.6} aria-hidden="true" />
+                      <span>{event.displayTime}</span>
+                    </li>
+                    {event.address && (
+                      <li>
+                        <MapPin size={16} strokeWidth={1.6} aria-hidden="true" />
+                        <span>{event.address}</span>
+                      </li>
+                    )}
+                    {event.description && (
+                      <li>
+                        <SparkIcon size={16} strokeWidth={1.6} aria-hidden="true" />
+                        <span>{event.description}</span>
+                      </li>
+                    )}
+                  </ul>
+                  <MapEmbed event={event} />
+                  {event.venue ? (
+                    <div className="venue-card__actions">
+                      <MapsButton event={event} />
+                      <a
+                        className="btn btn--ghost btn--sm"
+                        href={mapsDirections({ destination: placeQuery(event) })}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Navigation size={15} strokeWidth={1.6} aria-hidden="true" />
+                        Get directions
+                      </a>
+                    </div>
+                  ) : (
+                    <p className="venue-card__tba">Details will be shared soon.</p>
+                  )}
+                </div>
               </article>
             );
           })}

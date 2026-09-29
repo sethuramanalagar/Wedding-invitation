@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import Hero, { RoyalDoors } from "./components/Hero.jsx";
 import Couple from "./components/Couple.jsx";
+import Gallery from "./components/Gallery.jsx";
+import WeddingScene from "./components/WeddingScene.jsx";
 import Invitation from "./components/Invitation.jsx";
 import Countdown from "./components/Countdown.jsx";
 import EventsTimeline from "./components/EventsTimeline.jsx";
@@ -12,6 +14,7 @@ import RSVP from "./components/RSVP.jsx";
 import Footer from "./components/Footer.jsx";
 import MusicPlayer from "./components/MusicPlayer.jsx";
 import ThemePicker from "./components/ThemePicker.jsx";
+import DesktopAside from "./components/DesktopAside.jsx";
 import { wedding } from "./config/wedding.js";
 
 const prefersReducedMotion = () =>
@@ -58,6 +61,8 @@ export default function App() {
     if (opening || opened) return;
     const reduced = prefersReducedMotion();
     setOpening(true);
+    // Lets the music player start inside this tap (only if music.playOnOpen)
+    window.dispatchEvent(new Event("invitation:open"));
 
     const reveal = () => {
       setOpened(true);
@@ -87,7 +92,9 @@ export default function App() {
 
       <main id="main" className={`page ${opened ? "is-open" : ""}`} inert={!opened}>
         <Couple />
+        <Gallery />
         <Invitation />
+        <WeddingScene />
         <Countdown />
         <EventsTimeline />
         <Venue />
@@ -103,6 +110,7 @@ export default function App() {
       <MusicPlayer visible={opened} />
       {wedding.theme?.guestCanChange !== false && <ThemePicker visible={opened} />}
       {doors && <RoyalDoors />}
+      <DesktopAside />
     </>
   );
 }
