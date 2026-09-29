@@ -23,7 +23,7 @@ export const wedding = {
       "With joy, we invite you to the wedding of Er. A. Sethuraman, B.E. & Dr. A. Ragasudha, BNYS, MD — Friday, 13th November 2026.",
     // Your final public address, e.g. "https://sethu-ragasudha.vercel.app"
     // (no trailing slash). Needed so WhatsApp can show the preview image.
-    url: "",
+    url: "https://sethu-ragasudha.vercel.app",
     ogImage: "/images/og-image.jpg",
   },
 
