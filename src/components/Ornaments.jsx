@@ -190,6 +190,110 @@ export function Medallion({ className = "" }) {
   );
 }
 
+/* Thoranam — mango leaves & marigolds strung across a doorway */
+export function Toran({ className = "" }) {
+  // Points along a gentle sag from (10,14) to (310,14)
+  const n = 13;
+  const items = Array.from({ length: n }, (_, i) => {
+    const t = i / (n - 1);
+    const x = 10 + t * 300;
+    const y = 14 + Math.sin(Math.PI * t) * 16;
+    return { x, y, i };
+  });
+  return (
+    <svg className={`toran ${className}`} viewBox="0 0 320 78" {...deco}>
+      <path d="M6 12 Q160 46 314 12" fill="none" stroke="#8a6732" strokeWidth="1.4" />
+      {items.map(({ x, y, i }) =>
+        i % 2 === 0 ? (
+          <g key={i} transform={`translate(${x} ${y})`}>
+            <g className="toran__leaf" style={{ "--i": i }}>
+              <path d="M0 0 C7 10 6 24 0 34 C-6 24 -7 10 0 0 Z" fill="#6f7d3a" />
+              <path d="M0 2 V31" stroke="#9aa65a" strokeWidth=".8" />
+            </g>
+          </g>
+        ) : (
+          <g key={i} transform={`translate(${x} ${y + 6})`}>
+            <g className="toran__flower" style={{ "--i": i }}>
+              <circle r="7.5" fill="#d98a2b" />
+              <circle r="5" fill="#e9a23b" />
+              <circle r="2.2" fill="#b86a1d" />
+            </g>
+          </g>
+        ),
+      )}
+      <g className="toran__bell toran__bell--l">
+        <path d="M6 12 V30" stroke="#8a6732" strokeWidth="1" />
+        <path d="M0 40 C0 32 3 30 6 30 C9 30 12 32 12 40 Z" fill="#b08d57" />
+        <circle cx="6" cy="42" r="1.8" fill="#8a6732" />
+      </g>
+      <g className="toran__bell toran__bell--r">
+        <path d="M314 12 V30" stroke="#8a6732" strokeWidth="1" />
+        <path d="M308 40 C308 32 311 30 314 30 C317 30 320 32 320 40 Z" fill="#b08d57" />
+        <circle cx="314" cy="42" r="1.8" fill="#8a6732" />
+      </g>
+    </svg>
+  );
+}
+
+/* Hanging palace lantern with a glowing lamp */
+export function Lantern({ className = "", chain = 46 }) {
+  return (
+    <svg className={`lantern ${className}`} viewBox={`0 0 40 ${chain + 74}`} {...deco}>
+      <path d={`M20 0 V${chain}`} stroke="var(--gold)" strokeWidth="1" strokeDasharray="2 2.5" />
+      <g transform={`translate(0 ${chain})`}>
+        <circle className="lantern__glow" cx="20" cy="34" r="20" fill="url(#lanternGlow)" />
+        <defs>
+          <radialGradient id="lanternGlow">
+            <stop offset="0" stopColor="#ffd98a" stopOpacity=".75" />
+            <stop offset="1" stopColor="#ffd98a" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <path d="M20 0 L26 8 H14 Z" fill="var(--gold)" />
+        <path d="M11 8 H29 C31 14 31 16 29 18 H11 C9 16 9 14 11 8 Z" fill="var(--gold-deep)" />
+        <path d="M12 18 H28 L30 44 C30 50 25 54 20 54 C15 54 10 50 10 44 Z" fill="none" stroke="var(--gold)" strokeWidth="1.4" />
+        <path d="M16 20 V50 M20 20 V54 M24 20 V50" stroke="var(--gold)" strokeWidth=".7" opacity=".7" />
+        <path className="lantern__flame" d="M20 28 C23 33 23 37 20 40 C17 37 17 33 20 28 Z" fill="#ffcf6a" />
+        <path d="M16 56 H24 L20 66 Z" fill="var(--gold)" />
+        <circle cx="20" cy="70" r="2.4" fill="var(--gold)" />
+      </g>
+    </svg>
+  );
+}
+
+/* Twinkling gold dust — CSS-only particles */
+export function Sparkles({ count = 18, className = "" }) {
+  return (
+    <div className={`sparkles ${className}`} aria-hidden="true">
+      {Array.from({ length: count }, (_, i) => (
+        <span
+          key={i}
+          style={{
+            "--x": `${(i * 37 + 11) % 100}%`,
+            "--y": `${(i * 53 + 7) % 100}%`,
+            "--s": `${2 + (i % 4)}px`,
+            "--t": `${3 + (i % 5) * 0.9}s`,
+            "--dl": `${-(i * 0.7)}s`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* Small bus glyph for the route animation */
+export function BusGlyph() {
+  return (
+    <g>
+      <rect x="-13" y="-9" width="26" height="16" rx="4" fill="#6b1e2e" />
+      <rect x="-10" y="-6" width="8" height="5" rx="1" fill="#fbf6ec" />
+      <rect x="1" y="-6" width="9" height="5" rx="1" fill="#fbf6ec" />
+      <circle cx="-7" cy="8" r="2.6" fill="#2f1d16" />
+      <circle cx="7" cy="8" r="2.6" fill="#2f1d16" />
+      <rect x="-13" y="2" width="26" height="1.6" fill="#d6bd8a" />
+    </g>
+  );
+}
+
 /* Gently drifting petals — pure CSS animation, hidden for reduced motion */
 export function Petals({ count = 9 }) {
   return (

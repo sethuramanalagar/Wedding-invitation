@@ -45,7 +45,8 @@ function fold(line) {
 
 /** Venue line for an event, built only from configured values. */
 export function venueText(event) {
-  return [event.venue, event.address, event.location].filter(Boolean).join(", ");
+  // The address already includes the place name; fall back to location.
+  return [event.venue, event.address || event.location].filter(Boolean).join(", ");
 }
 
 function vevent(key, event) {

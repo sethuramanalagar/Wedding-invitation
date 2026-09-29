@@ -1,6 +1,19 @@
-import { MapPin } from "lucide-react";
+import { useState } from "react";
+import { Map as MapIcon, MapPin, Navigation, Route } from "lucide-react";
 import { wedding } from "../config/wedding.js";
 import { KolamDivider } from "./Ornaments.jsx";
+
+/* ── Google Maps link helpers (no API key needed) ─────────── */
+export const mapsDirections = ({ origin = "", destination, mode = "" }) => {
+  const p = new URLSearchParams({ api: "1", destination });
+  if (origin) p.set("origin", origin);
+  if (mode) p.set("travelmode", mode);
+  return `https://www.google.com/maps/dir/?${p.toString()}`;
+};
+const mapsEmbed = (query) =>
+  `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=15&output=embed`;
+export const placeQuery = (event) =>
+  event.mapsQuery || [event.venue, event.address || event.location].filter(Boolean).join(", ");
 
 /**
  * "Open in Google Maps" — rendered only when a URL is configured.
@@ -33,7 +46,7 @@ export function MapsButton({ event, placeholderWhenPending = false, className = 
   return null;
 }
 
-/** Venue name + place, or a graceful "to be announced". */
+/** Venue name + place + address, or a graceful "to be announced". */
 export function VenueLines({ event }) {
   if (!event.venue) {
     return <p className="venue-lines venue-lines--pending">Venue to be announced</p>;
@@ -41,9 +54,32 @@ export function VenueLines({ event }) {
   return (
     <address className="venue-lines">
       <span className="venue-lines__name">{event.venue}</span>
-      {event.address && <span className="venue-lines__place">{event.address}</span>}
       {event.location && <span className="venue-lines__place">{event.location}</span>}
+      {event.address && <span className="venue-lines__addr">{event.address}</span>}
     </address>
+  );
+}
+
+/** Lightweight map: the Google iframe loads only when the guest asks. */
+function MapEmbed({ event }) {
+  const [show, setShow] = useState(false);
+  const query = placeQuery(event);
+  if (!event.venue) return null;
+  return show ? (
+    <div className="map-embed">
+      <iframe
+        title={`Map of ${event.venue}`}
+        src={mapsEmbed(query)}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+      />
+    </div>
+  ) : (
+    <button type="button" className="map-embed map-embed--idle" onClick={() => setShow(true)}>
+      <MapIcon size={22} strokeWidth={1.4} aria-hidden="true" />
+      <span>Tap to show map</span>
+    </button>
   );
 }
 
@@ -54,6 +90,12 @@ const VENUES = [
 ];
 
 export default function Venue() {
+  const { marriage, postWedding } = wedding;
+  const templeToHall =
+    marriage.venue && postWedding.venue
+      ? mapsDirections({ origin: placeQuery(marriage), destination: placeQuery(postWedding) })
+      : "";
+
   return (
     <section className="section venues" id="venues" aria-labelledby="venues-title">
       <div className="container">
@@ -77,11 +119,34 @@ export default function Venue() {
                 </p>
                 <MapPin className="venue-card__pin" size={20} strokeWidth={1.4} aria-hidden="true" />
                 <VenueLines event={event} />
-                <MapsButton event={event} />
+                <MapEmbed event={event} />
+                {event.venue && (
+                  <div className="venue-card__actions">
+                    <MapsButton event={event} />
+                    <a
+                      className="btn btn--ghost btn--sm"
+                      href={mapsDirections({ destination: placeQuery(event) })}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Navigation size={15} strokeWidth={1.6} aria-hidden="true" />
+                      Get directions
+                    </a>
+                  </div>
+                )}
               </article>
             );
           })}
         </div>
+
+        {templeToHall && (
+          <div className="venues__link reveal">
+            <a className="btn btn--outline" href={templeToHall} target="_blank" rel="noopener noreferrer">
+              <Route size={16} strokeWidth={1.6} aria-hidden="true" />
+              Route: Temple → Hall
+            </a>
+          </div>
+        )}
       </div>
     </section>
   );

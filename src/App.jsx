@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import Hero from "./components/Hero.jsx";
+import Hero, { RoyalDoors } from "./components/Hero.jsx";
 import Couple from "./components/Couple.jsx";
 import Invitation from "./components/Invitation.jsx";
 import Countdown from "./components/Countdown.jsx";
 import EventsTimeline from "./components/EventsTimeline.jsx";
 import Venue from "./components/Venue.jsx";
+import RoutePlanner from "./components/RoutePlanner.jsx";
 import CalendarSection from "./components/CalendarButton.jsx";
 import ShareButton from "./components/ShareButton.jsx";
 import RSVP from "./components/RSVP.jsx";
 import Footer from "./components/Footer.jsx";
 import MusicPlayer from "./components/MusicPlayer.jsx";
+import ThemePicker from "./components/ThemePicker.jsx";
+import { wedding } from "./config/wedding.js";
 
 const prefersReducedMotion = () =>
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
@@ -42,6 +45,7 @@ function useScrollReveal(active) {
 export default function App() {
   const [opening, setOpening] = useState(false);
   const [opened, setOpened] = useState(false);
+  const [doors, setDoors] = useState(false);
 
   // Keep the page on the cover until the guest opens the invitation.
   useLayoutEffect(() => {
@@ -54,19 +58,27 @@ export default function App() {
     if (opening || opened) return;
     const reduced = prefersReducedMotion();
     setOpening(true);
-    window.setTimeout(
-      () => {
-        setOpened(true);
-        requestAnimationFrame(() => {
-          document
-            .getElementById("couple")
-            ?.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-          // Move keyboard / screen-reader focus into the invitation.
-          document.getElementById("couple-title")?.focus({ preventScroll: true });
-        });
-      },
-      reduced ? 0 : 900,
-    );
+
+    const reveal = () => {
+      setOpened(true);
+      requestAnimationFrame(() => {
+        // Jump (behind the doors) to the couple, then let the doors swing open.
+        document.getElementById("couple")?.scrollIntoView({ behavior: "auto", block: "start" });
+        // Move keyboard / screen-reader focus into the invitation.
+        document.getElementById("couple-title")?.focus({ preventScroll: true });
+      });
+    };
+
+    if (reduced) {
+      reveal();
+      return;
+    }
+    // 1) Palace doors appear over the cover (identical to it, so it looks seamless)
+    setDoors(true);
+    // 2) Behind them, the page moves to the couple section
+    window.setTimeout(reveal, 60);
+    // 3) Doors finish swinging open, then leave the page
+    window.setTimeout(() => setDoors(false), 2300);
   }, [opening, opened]);
 
   return (
@@ -79,6 +91,7 @@ export default function App() {
         <Countdown />
         <EventsTimeline />
         <Venue />
+        <RoutePlanner />
         <CalendarSection />
         <ShareButton />
         <RSVP />
@@ -88,6 +101,8 @@ export default function App() {
         <Footer />
       </div>
       <MusicPlayer visible={opened} />
+      {wedding.theme?.guestCanChange !== false && <ThemePicker visible={opened} />}
+      {doors && <RoyalDoors />}
     </>
   );
 }
