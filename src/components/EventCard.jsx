@@ -38,9 +38,11 @@ export default function EventCard({ eventKey, mood, Icon, featured = false, kick
         <p className="event-card__desc">{event.description}</p>
       )}
 
-      <div className="event-card__venue">
-        <VenueLines event={event} />
-      </div>
+      {(event.venue || wedding.text.venues.pending) && (
+        <div className="event-card__venue">
+          <VenueLines event={event} />
+        </div>
+      )}
 
       <MapsButton event={event} placeholderWhenPending />
     </article>

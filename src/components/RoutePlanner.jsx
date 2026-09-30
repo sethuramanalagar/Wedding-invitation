@@ -5,6 +5,7 @@ import { BusGlyph, KolamDivider } from "./Ornaments.jsx";
 import { mapsDirections, placeQuery } from "./Venue.jsx";
 
 const { travel } = wedding;
+const TX = wedding.text.reach;
 const norm = (s = "") => s.toLowerCase().replace(/[^a-z]/g, "");
 const POPULAR = ["chennai", "puducherry", "chidambaram", "mayiladuthurai", "kumbakonam", "trichy", "coimbatore", "bengaluru"];
 
@@ -19,9 +20,9 @@ function matchOrigin(text) {
 }
 
 const DESTS = [
-  { key: "marriage", label: "Temple", sub: "Wedding · 4 AM" },
-  { key: "postWedding", label: "Hall", sub: "Celebrations · 6 AM" },
-  { key: "reception", label: "Reception", sub: "12 Nov · 6 PM" },
+  { key: "marriage", label: TX.temple, sub: TX.templeSub },
+  { key: "postWedding", label: TX.hall, sub: TX.hallSub },
+  { key: "reception", label: TX.reception, sub: TX.receptionSub },
 ].filter((d) => wedding[d.key]?.venue);
 
 /* ── Animated journey line ─────────────────────────────────── */
@@ -124,13 +125,13 @@ export default function RoutePlanner() {
     if (!from) return [];
     const o = from.origin;
     const originName = o ? o.name : from.custom;
-    const list = [{ label: originName, kind: "origin", note: o ? o.distance + " to Sirkazhi" : "Your starting point" }];
+    const list = [{ label: originName, kind: "origin", note: o ? `${o.distance} ${TX.toHub}` : TX.startNote }];
     (o?.via ?? []).forEach((v) => list.push({ label: v, kind: "via" }));
     if (norm(originName) !== norm(travel.hub)) {
-      list.push({ label: travel.hub, kind: "hub", note: "Bus stand · Railway station" });
+      list.push({ label: travel.hub, kind: "hub", note: TX.hubNote });
     }
-    list.push({ label: travel.village, kind: "via", note: "Puthur – Pazhayar Road" });
-    list.push({ label: event.venue, kind: "venue", note: destLabel === "Temple" ? "Wedding · 4:00 AM" : event.displayTime });
+    list.push({ label: travel.village, kind: "via", note: TX.villageNote });
+    list.push({ label: event.venue, kind: "venue", note: event.displayTime });
     return list;
   }, [from, event, destLabel]);
 
@@ -139,9 +140,9 @@ export default function RoutePlanner() {
   return (
     <section className="section reach" id="reach" aria-labelledby="reach-title">
       <div className="container container--narrow">
-        <p className="eyebrow reveal">Plan your journey</p>
+        <p className="eyebrow reveal">{TX.eyebrow}</p>
         <h2 id="reach-title" className="section-title reveal">
-          How to reach us
+          {TX.title}
         </h2>
         <KolamDivider className="reveal" />
 
@@ -175,7 +176,7 @@ export default function RoutePlanner() {
             }}
           >
             <label htmlFor="from-input" className="reach__label">
-              Where are you travelling from?
+              {TX.fromLabel}
             </label>
             <div className="reach__inputrow">
               <Search size={18} strokeWidth={1.6} aria-hidden="true" className="reach__searchicon" />
@@ -184,12 +185,12 @@ export default function RoutePlanner() {
                 list="origin-list"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="Type your city or town"
+                placeholder={TX.placeholder}
                 autoComplete="off"
                 enterKeyHint="go"
               />
               <button type="submit" className="btn btn--solid btn--sm">
-                Show route
+                {TX.showRoute}
               </button>
             </div>
             <datalist id="origin-list">
@@ -246,14 +247,14 @@ export default function RoutePlanner() {
                     <li className="route-step" style={{ "--d": 0 }}>
                       <span className="route-step__icon"><Bus size={18} strokeWidth={1.6} /></span>
                       <div>
-                        <p className="route-step__title">By bus to Sirkazhi</p>
+                        <p className="route-step__title">{TX.byBus}</p>
                         <p>{from.origin.bus}</p>
                       </div>
                     </li>
                     <li className="route-step" style={{ "--d": 1 }}>
                       <span className="route-step__icon"><TrainFront size={18} strokeWidth={1.6} /></span>
                       <div>
-                        <p className="route-step__title">By train</p>
+                        <p className="route-step__title">{TX.byTrain}</p>
                         <p>{from.origin.train}</p>
                       </div>
                     </li>
@@ -262,18 +263,15 @@ export default function RoutePlanner() {
                   <li className="route-step" style={{ "--d": 0 }}>
                     <span className="route-step__icon"><Bus size={18} strokeWidth={1.6} /></span>
                     <div>
-                      <p className="route-step__title">Reach Sirkazhi first</p>
-                      <p>
-                        We don't have a saved route from “{from.custom}”. Travel to Sirkazhi (Sirkali) by bus or
-                        train — it's the nearest town — or tap the live route below for step-by-step directions.
-                      </p>
+                      <p className="route-step__title">{TX.reachHubFirst}</p>
+                      <p>{TX.noSavedRoute.replace("{place}", from.custom)}</p>
                     </div>
                   </li>
                 )}
                 <li className="route-step" style={{ "--d": 2 }}>
                   <span className="route-step__icon"><Car size={18} strokeWidth={1.6} /></span>
                   <div>
-                    <p className="route-step__title">Last stretch to the {destLabel.toLowerCase()}</p>
+                    <p className="route-step__title">{TX.lastStretch} {destLabel.toLowerCase()}</p>
                     {travel.lastMile.map((l, i) => (
                       <p key={i}>{l}</p>
                     ))}
@@ -293,7 +291,7 @@ export default function RoutePlanner() {
                   rel="noopener noreferrer"
                 >
                   <Bus size={17} strokeWidth={1.6} aria-hidden="true" />
-                  Live bus / train route
+                  {TX.liveRoute}
                 </a>
                 <a
                   className="btn btn--outline"
@@ -302,11 +300,11 @@ export default function RoutePlanner() {
                   rel="noopener noreferrer"
                 >
                   <Car size={17} strokeWidth={1.6} aria-hidden="true" />
-                  Car / taxi route
+                  {TX.carRoute}
                 </a>
               </div>
               <p className="route-card__disclaimer">
-                Distances and times are approximate. Please confirm bus and train timings before you travel.
+                {TX.disclaimer}
               </p>
             </div>
           )}
@@ -320,10 +318,10 @@ export default function RoutePlanner() {
             rel="noopener noreferrer"
           >
             <LocateFixed size={17} strokeWidth={1.6} aria-hidden="true" />
-            Directions from my current location
+            {TX.myLocation}
           </a>
           <details className="reach__details">
-            <summary>Trains &amp; flights</summary>
+            <summary>{TX.trainsFlights}</summary>
             <p>
               <TrainFront size={15} strokeWidth={1.6} aria-hidden="true" /> {travel.rail}
             </p>

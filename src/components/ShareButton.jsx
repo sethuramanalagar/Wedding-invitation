@@ -78,17 +78,17 @@ export default function ShareButton() {
       <div className="container container--narrow">
         <Lotus className="share__lotus reveal" />
         <h2 id="share-title" className="section-title reveal">
-          Share the joy
+          {wedding.text.share.title}
         </h2>
         <p className="share__text reveal">
-          Pass this invitation on to family and friends.
+          {wedding.text.share.text}
         </p>
 
         <div className="share__actions reveal">
           {isMobile && canShare && (
             <button type="button" className="btn btn--solid" onClick={onNativeShare}>
               <Share2 size={17} strokeWidth={1.6} aria-hidden="true" />
-              Share Invitation
+              {wedding.text.share.native}
             </button>
           )}
           {isMobile && (
@@ -99,7 +99,7 @@ export default function ShareButton() {
               rel="noopener noreferrer"
             >
               <MessageCircle size={17} strokeWidth={1.6} aria-hidden="true" />
-              Share on WhatsApp
+              {wedding.text.share.whatsapp}
             </a>
           )}
           <button
@@ -112,7 +112,7 @@ export default function ShareButton() {
             ) : (
               <Link2 size={17} strokeWidth={1.6} aria-hidden="true" />
             )}
-            {copied ? "Link copied" : "Copy Link"}
+            {copied ? wedding.text.share.copied : wedding.text.share.copy}
           </button>
         </div>
         <p className="sr-only" role="status" aria-live="polite">

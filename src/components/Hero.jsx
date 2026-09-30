@@ -68,10 +68,10 @@ export function HeroFace({ opened = false, onOpen, isStatic = false }) {
             {!opened ? (
               <button type="button" className="btn btn--seal" onClick={onOpen} tabIndex={isStatic ? -1 : 0}>
                 <span className="btn--seal__ring" aria-hidden="true" />
-                Open Invitation
+                {wedding.text.hero.openButton}
               </button>
             ) : (
-              <a href="#couple" className="scroll-cue" aria-label="Scroll to the invitation">
+              <a href="#couple" className="scroll-cue" aria-label={wedding.text.hero.scrollHint}>
                 <ChevronDown size={22} strokeWidth={1.5} />
               </a>
             )}

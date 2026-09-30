@@ -15,6 +15,7 @@ import Footer from "./components/Footer.jsx";
 import MusicPlayer from "./components/MusicPlayer.jsx";
 import ThemePicker from "./components/ThemePicker.jsx";
 import DesktopAside from "./components/DesktopAside.jsx";
+import TapBurst from "./components/TapBurst.jsx";
 import { wedding } from "./config/wedding.js";
 
 const prefersReducedMotion = () =>
@@ -111,6 +112,7 @@ export default function App() {
       {wedding.theme?.guestCanChange !== false && <ThemePicker visible={opened} />}
       {doors && <RoyalDoors />}
       <DesktopAside />
+      <TapBurst enabled={opened} />
     </>
   );
 }

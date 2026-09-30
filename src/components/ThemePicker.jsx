@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Palette } from "lucide-react";
 import { THEMES, applyTheme } from "../config/themes.js";
+import { wedding } from "../config/wedding.js";
 
 /** Floating royal-theme switcher (bottom-left). */
 export default function ThemePicker({ visible }) {
@@ -31,7 +32,7 @@ export default function ThemePicker({ visible }) {
     <div ref={ref} className={`theme-picker ${visible ? "is-visible" : ""}`}>
       {open && (
         <div className="theme-picker__menu" role="menu" aria-label="Choose a royal theme">
-          <p className="theme-picker__title">Royal theme</p>
+          <p className="theme-picker__title">{wedding.text.theme.title}</p>
           {THEMES.map((t) => (
             <button
               key={t.id}

@@ -36,6 +36,22 @@ on an animated royal stage whose colours follow the chosen theme. To use a
 new photo, replace the files with the same names. Use a transparent WebP or
 PNG for the cutouts (remove.bg or `rembg` can make one).
 
+## All on-screen text is editable
+
+Every heading, label and button lives in the `text` block of
+`src/config/wedding.js`. Set any value to `""` to hide it. For example,
+`venues.pending` (the old "Venue to be announced") is empty, so an unset
+reception venue simply isn't shown. Nicknames used in the cartoon banner are
+`groom.nickname` / `bride.nickname`.
+
+## Photos: every image in the images folder is shown
+
+Every photo in **`public/images/`** appears in the "Our Moments" slideshow
+automatically (in name order). The site's own graphics are skipped (preview
+image, cut-outs and portraits). Add `alt` text or a photographer credit via
+`gallery` in `src/config/wedding.js`, or hide a photo with
+`galleryExclude: ["file.jpg"]`.
+
 ## Phone view everywhere
 
 The invitation is designed for phones. On a laptop or desktop browser, the same
@@ -47,10 +63,16 @@ with the couple's names and wedding details on the sides.
 - **Our Moments**: an animated photo slideshow (auto-plays, swipe or tap the
   thumbnails). Photos are listed in `gallery` in `src/config/wedding.js`.
   Photo credit: Leaf9Studios.
-- **The Royal Wedding**: an animated cartoon scene. A cartoon groom and bride
-  walk into a royal mandapam, exchange garlands, hearts float up, and decorated
-  temple elephants raise their trunks under royal umbrellas while flowers
-  shower down (14-second loop).
+- **Sethu weds Sudha**: an animated cartoon story (about 20 seconds, loops while
+  on screen). Sethu and Sudha walk in, blink and smile at each other, raise and
+  swap garlands, then Sethu ties the golden thali while the band plays faster.
+  A rice-and-petal (akshathai) shower falls as the royal elephants raise their
+  trunks, and they hold hands under fireworks and a swinging "Sethu weds Sudha"
+  banner. Cartoon nadaswaram and thavil players perform throughout. The title,
+  eyebrow and captions are in `text.scene`.
+- **More animation**: kolam dividers draw themselves, countdown digits flip,
+  sky lanterns and fireworks rise in the closing, and tapping anywhere
+  releases a small burst of flower petals.
 - **Venues**: illustrated cards (temple at pre-dawn, hall at sunrise, evening
   reception) with date, time, address, a map that loads when scrolled to, and
   directions.
@@ -70,33 +92,31 @@ other themes. Their choice is remembered on their own phone only. Set it to
 `false` to lock everyone to your default. The colours are defined in
 `src/index.css` under `[data-theme=…]`.
 
-## C. Music
+## C. Music: every file in the music folder plays
 
-Four **original instrumentals** (composed and synthesised for this
-invitation, so there are no copyright problems) are **bundled into the build**
-from `src/assets/music/`. They always ship with the site; no separate folder
-needs uploading.
+**Put any music files in `public/music/`** (MP3, M4A, OGG, WAV, …).
+**All of them play automatically**, one after another, in name order. You
+don't need to edit any code: rebuild or redeploy and they're in. Titles are made
+from the file names (`nadaswaram-kalyanam.mp3` → "Nadaswaram Kalyanam").
 
-| Track | Instruments | Raga |
-|---|---|---|
-| Mangala Isai | nadaswaram-style reed, thavil, tanpura | Mohanam |
-| Vidiyal Veena | veena-style plucks, mridangam, tanpura | Hamsadhwani |
-| Bansuri Procession | bansuri-style flute, tabla, tanpura | Hindolam |
-| Santoor Evening | santoor-style strings, tabla, tanpura | Kalyani |
+Optional: to give a file a nicer title, subtitle or a licence credit, or to set
+the playing order, list it in `music.tracks` in `src/config/wedding.js`
+(matched by file name). Credits appear in the footer only for files that are
+present.
 
-- Music **starts when the guest taps "Open Invitation"**. Turn this off with
-  `music.playOnOpen: false`. It never plays on page load.
-- The player (bottom-right) has play / pause, previous / next, and a track list
-  (tap the track name). Phones also show lock-screen controls.
-- If no audio file can play (blocked network, very old phone), a **live veena
-  piece is generated in the browser**, so the music button always works.
+Recommended free-to-use mangala vadhyam recordings (save into `public/music/`):
+- Nadaswaram & thavil, live at a Chennai wedding (CC BY 4.0, credit already
+  configured): https://cdn.freesound.org/previews/320/320245_43-hq.mp3 → save as `mangala-vadhyam-chennai.mp3`
+- https://pixabay.com/music/india-south-india-nadaswaram-thavil-kappi-raga-358257/
+- https://pixabay.com/music/india-raga-valachi-nadaswaram-6-8-382924/
+- https://pixabay.com/music/wedding-traditional-wedding-ceremonial-vibe-with-shehna-376293/
 
-**Add your own songs** (these play first):
-- Easiest: copy the MP3 into `public/music/` and list it in `src/config/wedding.js`:
-  `{ title: "Our song", subtitle: "Nadaswaram", src: "/music/our-song.mp3" }`
-- Or bundle it: copy it into `src/assets/music/` and add it in `src/config/music.js`.
+Music starts when the guest taps **Open Invitation** (`music.playOnOpen`).
+After your files, the four bundled instrumentals in `src/assets/music/` play
+too (every file dropped there is included as well). If nothing can play, a live
+veena piece is generated in the browser.
 
-Only use music you have the right to share.
+Only use music you have the right to share publicly.
 
 ### "Music not found" / blank page?
 Browsers **do not run this site from a file on your disk**. Double-clicking

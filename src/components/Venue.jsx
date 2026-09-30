@@ -5,6 +5,8 @@ import { KolamDivider } from "./Ornaments.jsx";
 import { HallArt, ReceptionArt, TempleArt } from "./VenueArt.jsx";
 
 /* ── Google Maps link helpers (no API key needed) ─────────── */
+const TX = wedding.text.venues;
+
 export const mapsDirections = ({ origin = "", destination, mode = "" }) => {
   const p = new URLSearchParams({ api: "1", destination });
   if (origin) p.set("origin", origin);
@@ -32,15 +34,15 @@ export function MapsButton({ event, placeholderWhenPending = false, className = 
         aria-label={`Open ${event.venue || event.title} in Google Maps (opens in a new tab)`}
       >
         <MapPin size={16} strokeWidth={1.6} aria-hidden="true" />
-        Open in Google Maps
+        {TX.openMaps}
       </a>
     );
   }
-  if (placeholderWhenPending && !event.venue) {
+  if (placeholderWhenPending && !event.venue && TX.mapPending) {
     return (
       <button type="button" className={`btn btn--outline ${className}`} disabled>
         <MapPin size={16} strokeWidth={1.6} aria-hidden="true" />
-        Map coming soon
+        {TX.mapPending}
       </button>
     );
   }
@@ -50,7 +52,7 @@ export function MapsButton({ event, placeholderWhenPending = false, className = 
 /** Venue name + place + address, or a graceful "to be announced". */
 export function VenueLines({ event }) {
   if (!event.venue) {
-    return <p className="venue-lines venue-lines--pending">Venue to be announced</p>;
+    return TX.pending ? <p className="venue-lines venue-lines--pending">{TX.pending}</p> : null;
   }
   return (
     <address className="venue-lines">
@@ -94,15 +96,15 @@ function MapEmbed({ event }) {
   ) : (
     <button ref={ref} type="button" className="map-embed map-embed--idle" onClick={() => setShow(true)}>
       <MapIcon size={22} strokeWidth={1.4} aria-hidden="true" />
-      <span>Show map</span>
+      <span>{TX.showMap}</span>
     </button>
   );
 }
 
 const VENUES = [
-  { key: "marriage", label: "The Wedding · Temple", Art: TempleArt },
-  { key: "postWedding", label: "Celebrations & Feast · Hall", Art: HallArt },
-  { key: "reception", label: "Reception", Art: ReceptionArt },
+  { key: "marriage", label: TX.marriageLabel, Art: TempleArt },
+  { key: "postWedding", label: TX.postWeddingLabel, Art: HallArt },
+  { key: "reception", label: TX.receptionLabel, Art: ReceptionArt },
 ];
 
 export default function Venue() {
@@ -115,15 +117,17 @@ export default function Venue() {
   return (
     <section className="section venues" id="venues" aria-labelledby="venues-title">
       <div className="container">
-        <p className="eyebrow reveal">Where to find us</p>
+        <p className="eyebrow reveal">{TX.eyebrow}</p>
         <h2 id="venues-title" className="section-title reveal">
-          The Venues
+          {TX.title}
         </h2>
         <KolamDivider className="reveal" />
 
         <div className="venues__grid">
           {VENUES.map(({ key, label, Art }) => {
             const event = wedding[key];
+            // A venue that isn't set yet is hidden unless a "pending" text is configured
+            if (!event.venue && !TX.pending) return null;
             return (
               <article
                 className={`venue-card venue-card--${key} reveal ${key === "marriage" ? "venue-card--featured" : ""}`}
@@ -134,7 +138,7 @@ export default function Venue() {
                   <p className="venue-card__label">{label}</p>
                 </div>
                 <div className="venue-card__body">
-                  <h3 className="venue-card__name">{event.venue || "Venue to be announced"}</h3>
+                  <h3 className="venue-card__name">{event.venue || TX.pending}</h3>
                   {event.location && event.venue && <p className="venue-card__place">{event.location}</p>}
                   <ul className="venue-facts">
                     <li>
@@ -169,12 +173,10 @@ export default function Venue() {
                         rel="noopener noreferrer"
                       >
                         <Navigation size={15} strokeWidth={1.6} aria-hidden="true" />
-                        Get directions
+                        {TX.directions}
                       </a>
                     </div>
-                  ) : (
-                    <p className="venue-card__tba">Details will be shared soon.</p>
-                  )}
+                  ) : null}
                 </div>
               </article>
             );
@@ -185,7 +187,7 @@ export default function Venue() {
           <div className="venues__link reveal">
             <a className="btn btn--outline" href={templeToHall} target="_blank" rel="noopener noreferrer">
               <Route size={16} strokeWidth={1.6} aria-hidden="true" />
-              Route: Temple → Hall
+              {TX.templeToHall}
             </a>
           </div>
         )}

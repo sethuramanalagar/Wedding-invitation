@@ -3091,9 +3091,20 @@ button {
 }
 .gallery__thumbs {
   display: flex;
-  justify-content: center;
+  justify-content: safe center;
   gap: 12px;
   margin-top: 1.6rem;
+  padding: 6px 4px 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.gallery__thumbs::-webkit-scrollbar {
+  display: none;
+}
+.gallery__thumb {
+  flex-shrink: 0;
+  scroll-snap-align: center;
 }
 .gallery__thumb {
   width: 56px;
@@ -3123,7 +3134,7 @@ button {
 }
 
 /* ════════════════════════════════════════════════════════════
-   THE ROYAL WEDDING — animated cartoon scene (14 s loop)
+   SETHU WEDS SUDHA — animated cartoon story
    ════════════════════════════════════════════════════════════ */
 .scene {
   position: relative;
@@ -3131,7 +3142,6 @@ button {
   isolation: isolate;
   color: var(--ivory);
   background: var(--velvet-2);
-  --loop: 14s;
 }
 .scene__velvet {
   position: absolute;
@@ -3152,7 +3162,7 @@ button {
 .scene__stage {
   position: relative;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   margin: 1.6rem auto 0;
   border-radius: 200px 200px 18px 18px;
   overflow: hidden;
@@ -3180,9 +3190,9 @@ button {
   stroke-opacity: 0.4;
 }
 .scene__glow {
-  animation: glow-breathe 4s ease-in-out infinite alternate;
   transform-box: fill-box;
   transform-origin: center;
+  animation: glow-breathe 4s ease-in-out infinite alternate;
 }
 .scene__stage .petals {
   z-index: 2;
@@ -3197,141 +3207,352 @@ button {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 12px;
-  height: 2em;
+  bottom: 10px;
   z-index: 3;
+  min-height: 2em;
   text-align: center;
   pointer-events: none;
 }
 .scene__cap {
-  position: absolute;
-  inset: 0;
   font-family: var(--serif);
   font-style: italic;
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   color: #fff8e6;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
-  opacity: 0;
-  animation: var(--loop) linear infinite;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+  animation: cap-in 0.7s var(--ease) both;
 }
-.scene__cap--1 { animation-name: cap1; }
-.scene__cap--2 { animation-name: cap2; }
-.scene__cap--3 { animation-name: cap3; }
-@keyframes cap1 { 0%, 4% { opacity: 0 } 8%, 20% { opacity: 1 } 24%, 100% { opacity: 0 } }
-@keyframes cap2 { 0%, 24% { opacity: 0 } 28%, 44% { opacity: 1 } 48%, 100% { opacity: 0 } }
-@keyframes cap3 { 0%, 48% { opacity: 0 } 52%, 88% { opacity: 1 } 92%, 100% { opacity: 0 } }
+@keyframes cap-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+/* banner */
+.scene__banner {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: banner-sway 3.2s ease-in-out infinite alternate;
+}
+@keyframes banner-sway {
+  from { transform: rotate(-1.6deg); }
+  to { transform: rotate(1.6deg); }
+}
+.scene__banner-text {
+  font-family: var(--script);
+  font-size: 21px;
+  fill: #f3dc9a;
+}
+.story.is-finale .scene__banner {
+  filter: drop-shadow(0 0 8px rgba(255, 220, 140, 0.9));
+}
 
-/* couple walks in, stays, fades at the end of each loop */
-.ws-groom,
-.ws-bride {
-  animation: var(--loop) ease-in-out infinite;
+/* reset instantly between loops */
+.story.is-reset *,
+.story.is-reset {
+  transition: none !important;
 }
-.ws-groom { animation-name: walk-l; }
-.ws-bride { animation-name: walk-r; }
-@keyframes walk-l {
-  0% { transform: translateX(-150px); opacity: 0; }
-  3% { opacity: 1; }
-  12% { transform: translateX(0); }
-  14% { transform: translateX(0) translateY(-4px); }
-  16%, 92% { transform: translateX(0); opacity: 1; }
-  98%, 100% { transform: translateX(0); opacity: 0; }
+
+/* walking in */
+.ws-walk {
+  transition: transform 3.2s linear;
 }
-@keyframes walk-r {
-  0% { transform: translateX(150px); opacity: 0; }
-  3% { opacity: 1; }
-  12% { transform: translateX(0); }
-  14% { transform: translateX(0) translateY(-4px); }
-  16%, 92% { transform: translateX(0); opacity: 1; }
-  98%, 100% { transform: translateX(0); opacity: 0; }
+.ws-walk--l { transform: translateX(-210px); }
+.ws-walk--r { transform: translateX(210px); }
+.story.is-arrived .ws-walk { transform: none; }
+.story.is-walking .toon-foot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: step 0.42s ease-in-out infinite alternate;
 }
-/* garlands ride in on their necks, then swap in an arc */
+.story.is-walking .toon-foot--r { animation-delay: -0.42s; }
+@keyframes step {
+  from { transform: translate(-2px, 0); }
+  to { transform: translate(3px, -5px); }
+}
+.story.is-walking .toon-body {
+  animation: toon-bob 0.42s ease-in-out infinite alternate;
+}
+.story.is-walking .toon-dhoti {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: dhoti 0.42s ease-in-out infinite alternate;
+}
+@keyframes dhoti {
+  from { transform: skewX(-3deg); }
+  to { transform: skewX(3deg); }
+}
+.couple-layer {
+  transition: opacity 0.8s ease;
+}
+.story.is-fade .couple-layer {
+  opacity: 0;
+}
+
+/* always-alive details */
+.toon-eyes,
+.el-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: blink 4.2s infinite;
+}
+.toon--bride .toon-eyes { animation-delay: -1.7s; }
+.mus--nada .toon-eyes { animation-delay: -0.9s; }
+.mus--thavil .toon-eyes { animation-delay: -3s; }
+@keyframes blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+.toon-earring {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: umbrella 1.4s ease-in-out infinite alternate;
+}
+.toon-pallu {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: umbrella 2.6s ease-in-out infinite alternate;
+}
+
+/* poses */
+.toon-head,
+.toon-arm,
+.toon--groom {
+  transition: transform 0.8s var(--ease);
+}
+.toon-arm {
+  transform-origin: 0 0;
+}
+.toon-blush {
+  opacity: 0.35;
+  transition: opacity 0.8s ease;
+}
+.story.is-meet .toon--groom .toon-head,
+.story.is-finale .toon--groom .toon-head { transform: rotate(7deg); }
+.story.is-meet .toon--bride .toon-head,
+.story.is-thali .toon--bride .toon-head,
+.story.is-finale .toon--bride .toon-head { transform: rotate(-8deg); }
+.story.is-thali .toon--bride .toon-blush,
+.story.is-finale .toon--bride .toon-blush,
+.story.is-meet .toon-blush { opacity: 0.95; }
+/* arms raise the garlands */
+.story.is-armsUp .toon-arm--l { transform: rotate(140deg); }
+.story.is-armsUp .toon-arm--r { transform: rotate(-140deg); }
+/* groom steps close and reaches to tie the thali */
+.story.is-reach .toon--groom { transform: translateX(10px); }
+.story.is-reach .toon--groom .toon-arm--r { transform: rotate(-96deg); }
+/* holding hands */
+.story.is-hold .toon--groom .toon-arm--r { transform: rotate(-42deg); }
+.story.is-hold .toon--bride .toon-arm--l { transform: rotate(42deg); }
+
+/* garland exchange */
 .ws-garland {
-  animation: var(--loop) ease-in-out infinite;
+  transition: transform 1.1s var(--ease);
 }
-.ws-garland--a { animation-name: garland-a; }
-.ws-garland--b { animation-name: garland-b; }
-@keyframes garland-a {
-  0% { transform: translateX(-150px); opacity: 0; }
-  3% { opacity: 1; }
-  12%, 24% { transform: translate(0, 0); }
-  31% { transform: translate(50px, -70px) rotate(12deg); }
-  38%, 92% { transform: translate(96px, 0); opacity: 1; }
-  98%, 100% { transform: translate(96px, 0); opacity: 0; }
+.story.is-garlandUp .ws-garland { transform: translateY(-96px); }
+.story.is-garlandUp.is-swapped .ws-garland--a { transform: translate(76px, -96px) rotate(10deg); }
+.story.is-garlandUp.is-swapped .ws-garland--b { transform: translate(-76px, -96px) rotate(-10deg); }
+.story.is-swapped:not(.is-garlandUp) .ws-garland--a { transform: translateX(76px); }
+.story.is-swapped:not(.is-garlandUp) .ws-garland--b { transform: translateX(-76px); }
+
+/* thali */
+.ws-thali {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  opacity: 0;
+  transition:
+    transform 0.6s cubic-bezier(0.3, 1.6, 0.5, 1) 0.9s,
+    opacity 0.3s ease 0.9s;
 }
-@keyframes garland-b {
-  0% { transform: translateX(150px); opacity: 0; }
-  3% { opacity: 1; }
-  12%, 24% { transform: translate(0, 0); }
-  31% { transform: translate(-50px, -46px) rotate(-12deg); }
-  38%, 92% { transform: translate(-96px, 0); opacity: 1; }
-  98%, 100% { transform: translate(-96px, 0); opacity: 0; }
+.story.is-thali .ws-thali {
+  transform: none;
+  opacity: 1;
 }
-/* hearts float up after the exchange */
+.ws-thali-spark {
+  opacity: 0;
+}
+.story.is-thali .ws-thali-spark {
+  animation: spark 0.9s ease-out 1.1s 2;
+}
+@keyframes spark {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* hearts */
 .ws-heart {
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center;
-  animation: heart var(--loop) ease-out infinite;
-  animation-delay: calc(var(--k) * 0.25s);
 }
-@keyframes heart {
-  0%, 38% { opacity: 0; translate: 0 0; scale: 0.4; }
-  42% { opacity: 1; scale: 1.4; }
-  58% { opacity: 0; translate: 0 -70px; scale: 1; }
-  100% { opacity: 0; }
+.story.is-meet .ws-heart,
+.story.is-finale .ws-heart {
+  animation: heart-rise 1.8s ease-out infinite;
+  animation-delay: calc(var(--k) * 0.3s);
 }
-/* elephants raise trunks to bless the couple */
-@keyframes glow-breathe {
-  from { opacity: 0.55; transform: scale(0.94); }
-  to { opacity: 1; transform: scale(1.06); }
+@keyframes heart-rise {
+  0% { opacity: 0; transform: translateY(0) scale(0.4); }
+  20% { opacity: 1; transform: translateY(-8px) scale(1.25); }
+  100% { opacity: 0; transform: translateY(-60px) scale(0.9); }
 }
-.ws-elephant {
-  animation: elephant-bob 3.4s ease-in-out infinite alternate;
+
+/* akshathai (rice & petals) */
+.akshathai {
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
-.ws-elephant--r {
-  animation-delay: -1.7s;
+.story.is-bless .akshathai,
+.story.is-finale .akshathai {
+  opacity: 1;
 }
-@keyframes elephant-bob {
-  from { transform: translateY(0); }
-  to { transform: translateY(-3px); }
+.rice {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: rice-fall 2.6s linear infinite paused;
+  animation-delay: calc(var(--d) * -1);
 }
-.ws-umbrella {
+.story.is-bless .rice,
+.story.is-finale .rice {
+  animation-play-state: running;
+}
+@keyframes rice-fall {
+  from { transform: translate(0, -20px) rotate(0deg); }
+  to { transform: translate(-14px, 480px) rotate(540deg); }
+}
+
+/* fireworks */
+.fw {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+.story.is-finale .fw {
+  animation: fw 1.5s ease-out infinite;
+  animation-delay: calc(var(--k) * 0.37s);
+}
+@keyframes fw {
+  0% { opacity: 1; transform: scale(0.1); }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+
+/* elephants */
+.el-ear {
+  transform-box: fill-box;
+  transform-origin: 90% 40%;
+  animation: ear-flap 1.5s ease-in-out infinite alternate;
+}
+@keyframes ear-flap {
+  from { transform: rotate(-12deg); }
+  to { transform: rotate(8deg); }
+}
+.el-tail {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: umbrella 1.1s ease-in-out infinite alternate;
+}
+.el-umbrella {
   transform-box: fill-box;
   transform-origin: 50% 100%;
   animation: umbrella 5s ease-in-out infinite alternate;
 }
-@keyframes umbrella {
+.el-trunk {
+  transform-origin: 0 0;
+  transition: transform 1s var(--ease);
+}
+.story.is-bless .el-trunk,
+.story.is-finale .el-trunk {
+  transform: rotate(-72deg);
+}
+
+/* musicians */
+.mus-body {
+  animation: toon-bob 0.6s ease-in-out infinite alternate;
+}
+.mus-head {
+  animation: head-nod 1.2s ease-in-out infinite alternate;
+}
+@keyframes head-nod {
   from { transform: rotate(-4deg); }
   to { transform: rotate(4deg); }
 }
-.ws-bell {
-  animation: bell-swing 2.2s ease-in-out infinite alternate;
+.mus-nada {
+  animation: nada 1.1s ease-in-out infinite alternate;
 }
-.ws-bell:nth-of-type(2) {
-  animation-delay: -1.1s;
+@keyframes nada {
+  from { transform: rotate(-6deg); }
+  to { transform: rotate(5deg); }
 }
-@keyframes bell-swing {
-  from { transform: rotate(-9deg); }
-  to { transform: rotate(9deg); }
+.mus-cheek {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: puff 0.55s ease-in-out infinite alternate;
 }
+@keyframes puff {
+  from { transform: scale(0.8); }
+  to { transform: scale(1.15); }
+}
+.mus-hit {
+  transform-origin: 0 0;
+}
+.mus-hit--r { animation: hit-r 0.32s ease-in-out infinite alternate; }
+.mus-hit--l { animation: hit-l 0.32s ease-in-out -0.16s infinite alternate; }
+@keyframes hit-r {
+  from { transform: rotate(-28deg); }
+  to { transform: rotate(8deg); }
+}
+@keyframes hit-l {
+  from { transform: rotate(28deg); }
+  to { transform: rotate(-8deg); }
+}
+.mus-beat {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: beat 0.32s ease-out infinite;
+}
+.mus-beat--l { animation-delay: -0.16s; }
+@keyframes beat {
+  from { opacity: 0.9; transform: scale(0.6); }
+  to { opacity: 0; transform: scale(1.5); }
+}
+/* "gettimelam" — the band plays faster while the thali is tied */
+.story.is-thali .mus-hit--r,
+.story.is-thali .mus-hit--l,
+.story.is-thali .mus-beat {
+  animation-duration: 0.16s;
+}
+.story.is-thali .mus-nada {
+  animation-duration: 0.45s;
+}
+.mus-note {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: note-float 2.4s ease-out infinite;
+  animation-delay: calc(var(--k) * -0.8s);
+}
+@keyframes note-float {
+  0% { opacity: 0; transform: translate(0, 0) rotate(0deg); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(26px, -80px) rotate(20deg); }
+}
+
+/* fire & smoke */
 .ws-fire {
   transform-box: fill-box;
   transform-origin: 50% 100%;
   animation: fire 0.45s ease-in-out infinite alternate;
 }
-@keyframes fire {
-  from { transform: scale(0.94, 0.9); }
-  to { transform: scale(1.04, 1.1); }
+.ws-smoke {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: smoke 3s linear infinite;
+  animation-delay: calc(var(--k) * -1s);
 }
-@media (prefers-reduced-motion: reduce) {
-  .ws-groom,
-  .ws-bride,
-  .scene__cap--3 {
-    opacity: 1 !important;
-    transform: none !important;
-  }
-  .ws-garland--a { transform: translate(96px, 0) !important; opacity: 1 !important; }
-  .ws-garland--b { transform: translate(-96px, 0) !important; opacity: 1 !important; }
+@keyframes smoke {
+  0% { opacity: 0.35; transform: translate(0, 0) scale(0.6); }
+  100% { opacity: 0; transform: translate(12px, -90px) scale(2.4); }
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -3461,4 +3682,250 @@ button {
 }
 .va-banana {
   animation: umbrella 4s ease-in-out infinite alternate;
+}
+
+/* ════════════════════════════════════════════════════════════
+   YOUTUBE "NOW PLAYING" CARD
+   ════════════════════════════════════════════════════════════ */
+.yt-card {
+  position: fixed;
+  right: calc(var(--app-x) + max(16px, env(safe-area-inset-right)));
+  bottom: calc(max(16px, calc(env(safe-area-inset-bottom) + 12px)) + 64px);
+  z-index: 45; /* below the music bar, so the song list opens on top */
+  width: 272px;
+  padding: 8px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--velvet-2) 94%, transparent);
+  border: 1px solid var(--gold-soft);
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--velvet-2) 60%, transparent),
+    0 24px 50px -16px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px) scale(0.96);
+  transform-origin: bottom right;
+  transition:
+    opacity 0.4s var(--ease),
+    transform 0.4s var(--ease),
+    visibility 0s 0.4s;
+}
+.yt-card.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.4s var(--ease),
+    transform 0.4s var(--ease);
+}
+.yt-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px 6px 4px;
+}
+.yt-card__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: #fff3d6;
+}
+.yt-card__title svg {
+  flex-shrink: 0;
+  color: var(--gold-soft);
+}
+.yt-card__close {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--gold-soft) 60%, transparent);
+  background: transparent;
+  color: var(--gold-soft);
+  cursor: pointer;
+}
+.yt-card__player {
+  width: 256px;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #000;
+}
+.yt-card__player iframe {
+  display: block;
+  width: 256px;
+  height: 200px;
+  border: 0;
+}
+.music__track-icon.is-yt {
+  background: #c4302b;
+}
+.music__list {
+  max-height: min(70vh, 520px);
+  overflow-y: auto;
+}
+.closing__credits {
+  max-width: 34ch;
+  margin: 2.2rem auto 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--ivory) 60%, transparent);
+}
+.closing__credits a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+/* shared keyframes (scene + venue art) */
+@keyframes umbrella {
+  from { transform: rotate(-4deg); }
+  to { transform: rotate(4deg); }
+}
+@keyframes fire {
+  from { transform: scale(0.94, 0.9); }
+  to { transform: scale(1.04, 1.1); }
+}
+@keyframes glow-breathe {
+  from { opacity: 0.55; transform: scale(0.94); }
+  to { opacity: 1; transform: scale(1.06); }
+}
+@keyframes toon-bob {
+  from { transform: translateY(0); }
+  to { transform: translateY(-2.5px); }
+}
+
+/* ════════════════════════════════════════════════════════════
+   EXTRA ANIMATION — kolam draw-in, countdown flip, sky, taps
+   ════════════════════════════════════════════════════════════ */
+.kolam-divider.reveal path {
+  stroke-dasharray: 320;
+  stroke-dashoffset: 320;
+  transition: stroke-dashoffset 1.8s var(--ease) 0.15s;
+}
+.kolam-divider.reveal.is-visible path {
+  stroke-dashoffset: 0;
+}
+.kolam-divider.reveal circle {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  transition: transform 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) 1.1s;
+}
+.kolam-divider.reveal.is-visible circle {
+  transform: none;
+}
+
+.countdown__value {
+  display: inline-block;
+  animation:
+    flip-in 0.5s var(--ease),
+    foil 7s linear infinite;
+}
+@keyframes flip-in {
+  from {
+    transform: perspective(200px) rotateX(-90deg);
+    opacity: 0;
+  }
+}
+.countdown__unit:last-child {
+  animation: pulse-gold 1s ease-in-out infinite;
+}
+@keyframes pulse-gold {
+  50% {
+    box-shadow: 0 0 18px rgba(243, 214, 138, 0.35);
+    border-color: rgba(243, 214, 138, 0.7);
+  }
+}
+
+/* closing sky: lanterns rise, fireworks burst */
+.sky {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.sky-lantern {
+  position: absolute;
+  bottom: -40px;
+  left: calc(6% + var(--i) * 10.5%);
+  width: calc(14px + (var(--i) * 3px) % 12px);
+  width: calc(14px + var(--i) * 1.2px);
+  opacity: 0;
+  filter: drop-shadow(0 0 8px rgba(255, 200, 110, 0.8));
+  animation: lantern-rise calc(14s + var(--i) * 1.3s) linear infinite;
+  animation-delay: calc(var(--i) * -1.9s);
+}
+.sky-lantern svg {
+  width: 100%;
+  height: auto;
+  animation: lantern-swing 3s ease-in-out infinite alternate;
+}
+@keyframes lantern-rise {
+  0% { transform: translate(0, 0); opacity: 0; }
+  8% { opacity: 0.95; }
+  80% { opacity: 0.85; }
+  100% { transform: translate(40px, -115vh); opacity: 0; }
+}
+.sky-fw {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  margin: -35px 0 0 -35px;
+  opacity: 0;
+  animation: sky-fw 3.2s ease-out infinite;
+  animation-delay: calc(var(--k) * 0.65s);
+}
+@keyframes sky-fw {
+  0% { opacity: 1; transform: scale(0.1); }
+  40% { opacity: 1; }
+  60%, 100% { opacity: 0; transform: scale(1.3); }
+}
+
+/* tap bursts */
+.tap-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  pointer-events: none;
+  overflow: hidden;
+}
+.tap-bit {
+  position: absolute;
+  width: 8px;
+  height: 11px;
+  margin: -5px 0 0 -4px;
+  border-radius: 50% 50% 50% 0;
+  animation: tap-fly 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+.tap-bit--spark {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  box-shadow: 0 0 8px 2px rgba(255, 230, 160, 0.9);
+}
+@keyframes tap-fly {
+  0% { transform: translate(0, 0) rotate(0) scale(0.4); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translate(var(--dx), calc(var(--dy) + 40px)) rotate(var(--rot)) scale(1); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sky,
+  .tap-layer {
+    display: none;
+  }
+  .kolam-divider.reveal path {
+    stroke-dashoffset: 0 !important;
+  }
+  .kolam-divider.reveal circle {
+    transform: none !important;
+  }
 }

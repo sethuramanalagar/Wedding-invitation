@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { wedding } from "./src/config/wedding.js";
@@ -43,9 +45,55 @@ function weddingMeta() {
   };
 }
 
+/**
+ * `virtual:media` — lists every file in public/music and public/images at
+ * build time, so the site plays ALL music and shows ALL photos in those
+ * folders without editing any code. In dev, adding/removing a file reloads.
+ */
+function mediaManifest() {
+  const VID = "virtual:media";
+  const RID = "\0virtual:media";
+  const DIRS = {
+    music: ["public/music", /\.(mp3|m4a|aac|ogg|oga|opus|wav|flac|webm)$/i],
+    images: ["public/images", /\.(jpe?g|png|webp|avif|gif)$/i],
+  };
+  const list = ([dir, re]) => {
+    try {
+      return fs
+        .readdirSync(path.resolve(dir))
+        .filter((f) => re.test(f) && !f.startsWith("."))
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+    } catch {
+      return [];
+    }
+  };
+  return {
+    name: "wedding-media",
+    resolveId(id) {
+      if (id === VID) return RID;
+    },
+    load(id) {
+      if (id !== RID) return;
+      return `export const music = ${JSON.stringify(list(DIRS.music))};\nexport const images = ${JSON.stringify(list(DIRS.images))};`;
+    },
+    configureServer(server) {
+      const dirs = Object.values(DIRS).map(([d]) => path.resolve(d));
+      server.watcher.add(dirs);
+      const onChange = (file) => {
+        if (!dirs.some((d) => file.startsWith(d))) return;
+        const mod = server.moduleGraph.getModuleById(RID);
+        if (mod) server.moduleGraph.invalidateModule(mod);
+        server.ws.send({ type: "full-reload" });
+      };
+      server.watcher.on("add", onChange);
+      server.watcher.on("unlink", onChange);
+    },
+  };
+}
+
 // base: "./" makes the build work at a domain root (Vercel/Netlify)
 // and inside a sub-folder (GitHub Pages) without changes.
 export default defineConfig({
   base: "./",
-  plugins: [react(), weddingMeta()],
+  plugins: [react(), weddingMeta(), mediaManifest()],
 });

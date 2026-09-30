@@ -110,9 +110,9 @@ export default function Couple() {
         </figure>
 
         <div className="couple__people">
-          <Portrait person={groom} image={groomImage} role="The Groom" />
+          <Portrait person={groom} image={groomImage} role={wedding.text.couple.groomRole} />
           <Lotus className="couple__lotus reveal" />
-          <Portrait person={bride} image={brideImage} role="The Bride" />
+          <Portrait person={bride} image={brideImage} role={wedding.text.couple.brideRole} />
         </div>
       </div>
     </section>

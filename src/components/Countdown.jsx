@@ -27,18 +27,18 @@ export default function Countdown() {
   const { days, hours, minutes, seconds } = splitDuration(target - now);
 
   const units = [
-    { label: "Days", value: days },
-    { label: "Hours", value: hours },
-    { label: "Minutes", value: minutes },
-    { label: "Seconds", value: seconds },
+    { key: "d", label: wedding.text.countdown.days, value: days },
+    { key: "h", label: wedding.text.countdown.hours, value: hours },
+    { key: "m", label: wedding.text.countdown.minutes, value: minutes },
+    { key: "s", label: wedding.text.countdown.seconds, value: seconds },
   ];
 
   return (
     <section className="section countdown" id="countdown" aria-labelledby="countdown-title">
       <div className="container">
-        <p className="eyebrow reveal">Until the wedding begins</p>
+        <p className="eyebrow reveal">{wedding.text.countdown.eyebrow}</p>
         <h2 id="countdown-title" className="section-title reveal">
-          Counting the moments
+          {wedding.text.countdown.title}
         </h2>
         <p className="countdown__when reveal">
           {wedding.marriage.displayDate} · {wedding.marriage.displayTime.split("–")[0].trim()}
@@ -47,8 +47,10 @@ export default function Countdown() {
         {phase === "before" ? (
           <div className="countdown__grid reveal" role="timer" aria-live="off">
             {units.map((u) => (
-              <div className="countdown__unit" key={u.label}>
-                <span className="countdown__value">{u.label === "Days" ? u.value : pad(u.value)}</span>
+              <div className="countdown__unit" key={u.key}>
+                <span className="countdown__value" key={u.value}>
+                  {u.key === "d" ? u.value : pad(u.value)}
+                </span>
                 <span className="countdown__label">{u.label}</span>
               </div>
             ))}
@@ -62,7 +64,7 @@ export default function Countdown() {
         )}
 
         <KolamDivider className="countdown__divider" />
-        <p className="tz-note">All times are in India Standard Time (IST)</p>
+        <p className="tz-note">{wedding.text.countdown.timezoneNote}</p>
       </div>
     </section>
   );

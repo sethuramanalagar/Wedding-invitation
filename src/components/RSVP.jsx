@@ -15,14 +15,14 @@ export default function RSVP() {
     <section className="section rsvp" id="rsvp" aria-labelledby="rsvp-title">
       <div className="container container--narrow">
         <h2 id="rsvp-title" className="section-title reveal">
-          Kindly confirm your presence
+          {wedding.text.rsvp.title}
         </h2>
         <KolamDivider className="reveal" />
         <div className="share__actions reveal">
           {rsvp.phone && (
             <a className="btn btn--outline" href={`tel:${rsvp.phone.replace(/[^\d+]/g, "")}`}>
               <Phone size={17} strokeWidth={1.6} aria-hidden="true" />
-              Call
+              {wedding.text.rsvp.call}
             </a>
           )}
           {waNumber && (
@@ -33,7 +33,7 @@ export default function RSVP() {
               rel="noopener noreferrer"
             >
               <MessageCircle size={17} strokeWidth={1.6} aria-hidden="true" />
-              WhatsApp
+              {wedding.text.rsvp.whatsapp}
             </a>
           )}
         </div>

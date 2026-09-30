@@ -28,7 +28,7 @@ export function CalendarButton({ eventKey, filename }) {
           aria-label={`Add ${event.title} to your calendar`}
         >
           <CalendarPlus size={16} strokeWidth={1.6} aria-hidden="true" />
-          Add to Calendar
+          {wedding.text.calendar.add}
         </button>
         <a
           className="link-subtle"
@@ -36,7 +36,7 @@ export function CalendarButton({ eventKey, filename }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Google Calendar
+          {wedding.text.calendar.google}
         </a>
       </div>
     </div>
@@ -47,9 +47,9 @@ export default function CalendarSection() {
   return (
     <section className="section calendar" id="calendar" aria-labelledby="calendar-title">
       <div className="container container--narrow">
-        <p className="eyebrow reveal">Save the dates</p>
+        <p className="eyebrow reveal">{wedding.text.calendar.eyebrow}</p>
         <h2 id="calendar-title" className="section-title reveal">
-          Add to your calendar
+          {wedding.text.calendar.title}
         </h2>
         <KolamDivider className="reveal" />
 
@@ -71,7 +71,7 @@ export default function CalendarSection() {
             }
           >
             <CalendarHeart size={17} strokeWidth={1.6} aria-hidden="true" />
-            Add all three events
+            {wedding.text.calendar.addAll}
           </button>
         </div>
       </div>

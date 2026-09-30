@@ -1,20 +1,33 @@
 /**
- * Built-in wedding music. These files live in src/assets/music/ and are
- * BUNDLED into the build (imported below), so they always ship with the
- * site — no separate upload of a public/ folder needed.
- *
- * To add your own song:
- *   1. copy the MP3 into src/assets/music/
- *   2. add an import + an entry below (title is shown in the player)
+ * Built-in music: EVERY audio file in src/assets/music/ is bundled and
+ * played automatically (after the files in public/music/). Drop more files
+ * into either folder — no code changes needed.
  */
-import mangalaIsai from "../assets/music/mangala-isai.mp3";
-import vidiyalVeena from "../assets/music/vidiyal-veena.mp3";
-import bansuriProcession from "../assets/music/bansuri-procession.mp3";
-import santoorEvening from "../assets/music/santoor-evening.mp3";
+import { prettyName } from "../utils/media.js";
 
-export const BUNDLED_TRACKS = [
-  { title: "Mangala Isai", subtitle: "Nadaswaram & thavil · Raga Mohanam", src: mangalaIsai },
-  { title: "Vidiyal Veena", subtitle: "Dawn veena & mridangam · Raga Hamsadhwani", src: vidiyalVeena },
-  { title: "Bansuri Procession", subtitle: "Flute & tabla · Raga Hindolam", src: bansuriProcession },
-  { title: "Santoor Evening", subtitle: "Santoor & tabla · Raga Kalyani", src: santoorEvening },
-].map((t) => ({ ...t, bundled: true }));
+const files = import.meta.glob("../assets/music/*.{mp3,m4a,aac,ogg,oga,opus,wav,flac,webm}", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+
+// Optional nicer titles for the bundled originals (by file name).
+const KNOWN = {
+  "mangala-isai.mp3": { title: "Mangala Isai", subtitle: "Nadaswaram & thavil · Raga Mohanam" },
+  "vidiyal-veena.mp3": { title: "Vidiyal Veena", subtitle: "Dawn veena & mridangam · Raga Hamsadhwani" },
+  "bansuri-procession.mp3": { title: "Bansuri Procession", subtitle: "Flute & tabla · Raga Hindolam" },
+  "santoor-evening.mp3": { title: "Santoor Evening", subtitle: "Santoor & tabla · Raga Kalyani" },
+};
+
+export const BUNDLED_TRACKS = Object.entries(files)
+  .sort(([a], [b]) => {
+    const order = Object.keys(KNOWN);
+    const ia = order.indexOf(a.split("/").pop());
+    const ib = order.indexOf(b.split("/").pop());
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib) || a.localeCompare(b, undefined, { numeric: true });
+  })
+  .map(([p, url]) => {
+    const file = p.split("/").pop();
+    const meta = KNOWN[file] || {};
+    return { title: meta.title || prettyName(file), subtitle: meta.subtitle || "", src: url, bundled: true };
+  });

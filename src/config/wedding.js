@@ -43,12 +43,14 @@ export const wedding = {
 
   groom: {
     firstName: "Sethuraman",
+    nickname: "Sethu",
     name: "Er. A. Sethuraman",
     qualification: "B.E.",
   },
 
   bride: {
     firstName: "Ragasudha",
+    nickname: "Sudha",
     name: "Dr. A. Ragasudha",
     qualification: "BNYS, MD",
   },
@@ -97,9 +99,9 @@ export const wedding = {
     date: "2026-11-13",
     displayDate: "Friday, 13th November 2026",
     shortDate: "13 NOV",
-    startTime: "04:30",
+    startTime: "04:00",
     endTime: "06:00",
-    displayTime: "4:30 AM – 6:00 AM",
+    displayTime: "4:00 AM – 6:00 AM",
     description: "The marriage ceremony",
     venue: "Kandamakudiyan Kanjivanam Karuppusamy Temple",
     address: "8RC8+Q2P, Madathukuppam, Tamil Nadu 609101",
@@ -153,16 +155,48 @@ export const wedding = {
   brideImage: "/images/bride.webp",
 
   /* Background music — never plays on page load; starts with a tap.
-     Four built-in tracks are bundled automatically (src/config/music.js).
-     To add your OWN songs, put MP3s in public/music/ and list them here —
-     they play before the built-in ones. */
+     Mangala vadhyam (nadaswaram & thavil) recordings play first, in order.
+     Put each MP3 in public/music/ with the file name shown below — see
+     README "Music" for the download links. A missing file is skipped
+     automatically, and the built-in instrumentals are the fallback. */
   music: {
     enabled: true,
-    volume: 0.5,
-    playOnOpen: true, // music starts when the guest taps "Open Invitation"
+    volume: 0.6,
+    playOnOpen: true, // start when the guest taps "Open Invitation"
     tracks: [
-      // { title: "Our song", subtitle: "Nadaswaram", src: "/music/our-song.mp3" },
+      {
+        title: "Kalyana Mangala Vadhyam",
+        subtitle: "Nadaswaram & thavil · live at a Chennai wedding",
+        src: "/music/mangala-vadhyam-chennai.mp3",
+        // CC BY 4.0 — this credit is required and is shown on the site
+        credit: '"wedding-music.wav" by xserra (Freesound) · CC BY 4.0',
+        creditUrl: "https://freesound.org/people/xserra/sounds/320245/",
+      },
+      {
+        title: "Nadaswaram & Thavil · Kappi",
+        subtitle: "Raga Kappi · Saseendran",
+        src: "/music/nadaswaram-thavil-kappi.mp3",
+        credit: "Saseendran (Pixabay)",
+        creditUrl: "https://pixabay.com/music/india-south-india-nadaswaram-thavil-kappi-raga-358257/",
+      },
+      {
+        title: "Nadaswaram · Valachi",
+        subtitle: "Raga Valachi · Saseendran",
+        src: "/music/nadaswaram-valachi.mp3",
+        credit: "Saseendran (Pixabay)",
+        creditUrl: "https://pixabay.com/music/india-raga-valachi-nadaswaram-6-8-382924/",
+      },
+      {
+        title: "Shehnai · Wedding Ceremony",
+        subtitle: "Traditional wedding ceremonial music",
+        src: "/music/wedding-shehnai.mp3",
+        credit: "DesiFreeMusic (Pixabay)",
+        creditUrl: "https://pixabay.com/music/wedding-traditional-wedding-ceremonial-vibe-with-shehna-376293/",
+      },
     ],
+    // Optional: YouTube songs (played in YouTube's own visible player).
+    // Left empty on purpose — add { title, subtitle, url } items to use it.
+    youtube: [],
   },
 
   /* ── HOW TO REACH ───────────────────────────────────────────
@@ -176,7 +210,7 @@ export const wedding = {
     hub: "Sirkazhi (Sirkali)",
     village: "Thandavankulam",
     arriveNote:
-      "The wedding begins at 4:30 AM on 13 November. Guests travelling from afar are requested to arrive by the evening of 12 November.",
+      "The wedding begins at 4:00 AM on 13 November. Guests travelling from afar are requested to arrive by the evening of 12 November.",
     lastMile: [
       "Thandavankulam is about 17 km from Sirkazhi, on the Puthur – Pazhayar Road.",
       "Auto-rickshaws and taxis are available at Sirkazhi bus stand and railway station.",
@@ -218,6 +252,92 @@ export const wedding = {
       { id: "bengaluru", name: "Bengaluru", aliases: ["bangalore", "blr", "hosur"], distance: "about 400 km", time: "overnight", via: ["Salem", "Tiruchirappalli", "Mayiladuthurai"],
         bus: "Overnight private sleeper buses run to Sirkazhi.", train: "Trains from Bengaluru to Mayiladuthurai Jn, then a bus to Sirkazhi (24 km)." },
     ],
+  },
+
+  /* ── ALL ON-SCREEN TEXT ─────────────────────────────────
+   *  Every heading, label and button on the site. Change the wording
+   *  here. An empty string ("") hides that piece of text.
+   * ──────────────────────────────────────────────────────────── */
+  text: {
+    hero: { openButton: "Open Invitation", scrollHint: "Scroll to the invitation" },
+    couple: { groomRole: "The Groom", brideRole: "The Bride" },
+    gallery: { eyebrow: "Captured with love", title: "Our Moments", credit: "Photo" },
+    scene: {
+      eyebrow: "Our love story",
+      title: "Sethu weds Sudha",
+      captions: [
+        "Sethu & Sudha arrive…",
+        "…garlands are exchanged…",
+        "…the sacred thali is tied…",
+        "…showered with blessings!",
+        "Sethu ❤ Sudha",
+      ],
+    },
+    countdown: {
+      eyebrow: "Until the wedding begins",
+      title: "Counting the moments",
+      days: "Days",
+      hours: "Hours",
+      minutes: "Minutes",
+      seconds: "Seconds",
+      timezoneNote: "All times are in India Standard Time (IST)",
+    },
+    events: {
+      eyebrow: "Join us",
+      title: "Our Wedding Celebrations",
+      receptionKicker: "An evening together",
+      marriageKicker: "The marriage ceremony",
+      postWeddingKicker: "After the wedding",
+      bridge: "Celebrations continue",
+    },
+    venues: {
+      eyebrow: "Where to find us",
+      title: "The Venues",
+      receptionLabel: "Reception",
+      marriageLabel: "The Wedding · Temple",
+      postWeddingLabel: "Celebrations & Feast · Hall",
+      pending: "", // shown when a venue isn't set yet (e.g. "Venue to be announced")
+      mapPending: "", // button shown when a venue isn't set yet (e.g. "Map coming soon")
+      showMap: "Show map",
+      openMaps: "Open in Google Maps",
+      directions: "Get directions",
+      templeToHall: "Route: Temple → Hall",
+    },
+    reach: {
+      eyebrow: "Plan your journey",
+      title: "How to reach us",
+      fromLabel: "Where are you travelling from?",
+      placeholder: "Type your city or town",
+      showRoute: "Show route",
+      byBus: "By bus to Sirkazhi",
+      byTrain: "By train",
+      reachHubFirst: "Reach Sirkazhi first",
+      lastStretch: "Last stretch to the",
+      liveRoute: "Live bus / train route",
+      carRoute: "Car / taxi route",
+      myLocation: "Directions from my current location",
+      trainsFlights: "Trains & flights",
+      disclaimer: "Distances and times are approximate. Please confirm bus and train timings before you travel.",
+      temple: "Temple",
+      templeSub: "Wedding · 4 AM",
+      hall: "Hall",
+      hallSub: "Celebrations · 6 AM",
+      reception: "Reception",
+      receptionSub: "12 Nov · 6 PM",
+      startNote: "Your starting point",
+      toHub: "to Sirkazhi",
+      hubNote: "Bus stand · Railway station",
+      villageNote: "Puthur – Pazhayar Road",
+      noSavedRoute:
+        "We don't have a saved route from “{place}”. Travel to Sirkazhi (Sirkali) by bus or train — it's the nearest town — or tap the live route below for step-by-step directions.",
+    },
+    calendar: { eyebrow: "Save the dates", title: "Add to your calendar", add: "Add to Calendar", google: "Google Calendar", addAll: "Add all three events" },
+    share: { title: "Share the joy", text: "Pass this invitation on to family and friends.", native: "Share Invitation", whatsapp: "Share on WhatsApp", copy: "Copy Link", copied: "Link copied" },
+    rsvp: { title: "Kindly confirm your presence", call: "Call", whatsapp: "WhatsApp" },
+    footer: { backToTop: "Back to top", musicCredit: "Music:" },
+    music: { hint: "♪ Tap for music", listTitle: "Wedding music", ownGroup: "Mangala vadhyam", bundledGroup: "Instrumentals" },
+    theme: { title: "Royal theme" },
+    desktop: { note: "Best enjoyed on your phone" },
   },
 
   /* ── RSVP ───────────────────────────────────────────────── */

@@ -21,7 +21,7 @@ export default function DesktopAside() {
         <p className="desk-aside__big">{marriage.venue}</p>
         <p className="desk-aside__note">{marriage.displayTime}</p>
         <KolamDivider />
-        <p className="desk-aside__note">Best enjoyed on your phone</p>
+        <p className="desk-aside__note">{wedding.text.desktop.note}</p>
       </aside>
     </>
   );

@@ -24,9 +24,9 @@ export default function EventsTimeline() {
   return (
     <section className="events" id="events" aria-labelledby="events-title">
       <div className="container events__head">
-        <p className="eyebrow reveal">Join us</p>
+        <p className="eyebrow reveal">{wedding.text.events.eyebrow}</p>
         <h2 id="events-title" className="section-title reveal">
-          Our Wedding Celebrations
+          {wedding.text.events.title}
         </h2>
         <KolamDivider className="reveal" />
       </div>
@@ -36,7 +36,7 @@ export default function EventsTimeline() {
           <div className="container tl-stage__inner">
             <span className="tl-line reveal" aria-hidden="true" />
             <DayMarker event={reception} />
-            <EventCard eventKey="reception" mood="evening" Icon={DiyaIcon} kicker="An evening together" />
+            <EventCard eventKey="reception" mood="evening" Icon={DiyaIcon} kicker={wedding.text.events.receptionKicker} />
           </div>
         </li>
 
@@ -49,7 +49,7 @@ export default function EventsTimeline() {
               mood="predawn"
               Icon={TempleIcon}
               featured
-              kicker="The marriage ceremony"
+              kicker={wedding.text.events.marriageKicker}
             />
           </div>
         </li>
@@ -59,10 +59,10 @@ export default function EventsTimeline() {
             <span className="tl-line reveal" aria-hidden="true" />
             <div className="tl-bridge reveal">
               <SunriseIcon className="tl-bridge__icon" />
-              <p className="tl-bridge__text">Celebrations continue</p>
+              <p className="tl-bridge__text">{wedding.text.events.bridge}</p>
               <p className="tl-bridge__time">{postWedding.displayTime}</p>
             </div>
-            <EventCard eventKey="postWedding" mood="morning" Icon={LeafIcon} kicker="After the wedding" />
+            <EventCard eventKey="postWedding" mood="morning" Icon={LeafIcon} kicker={wedding.text.events.postWeddingKicker} />
           </div>
         </li>
       </ol>

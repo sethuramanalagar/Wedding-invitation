@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { Camera, ChevronLeft, ChevronRight } from "lucide-react";
 import { wedding } from "../config/wedding.js";
 import { asset } from "../utils/asset.js";
+import { galleryPhotos } from "../utils/media.js";
 import { KolamDivider, Petals, Sparkles } from "./Ornaments.jsx";
 
 /** "Our Moments" — royal animated photo slideshow (auto-plays, swipeable). */
 export default function Gallery() {
-  const photos = wedding.gallery || [];
+  // Every photo in public/images (auto-discovered at build time)
+  const photos = galleryPhotos();
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   const startX = useRef(null);
@@ -29,9 +31,9 @@ export default function Gallery() {
       <div className="gallery__velvet" aria-hidden="true" />
       <Sparkles count={14} />
       <div className="container">
-        <p className="eyebrow reveal">Captured with love</p>
+        <p className="eyebrow reveal">{wedding.text.gallery.eyebrow}</p>
         <h2 id="moments-title" className="section-title reveal">
-          <span className="script foil gallery__title">Our Moments</span>
+          <span className="script foil gallery__title">{wedding.text.gallery.title}</span>
         </h2>
         <KolamDivider className="reveal" />
 
