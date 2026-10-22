@@ -1,45 +1,56 @@
-import { wedding } from "../config/wedding.js";
-import { fullName } from "../utils/asset.js";
-import { CornerFlourish, KolamDivider, Lotus } from "./Ornaments.jsx";
+import { useLang } from "../i18n.jsx";
+import { Corner, Divider } from "./Ornaments.jsx";
 
 export default function Invitation() {
-  const { invitation, groom, bride } = wedding;
-
+  const { t } = useLang();
+  const { groom, bride, card, invite } = t;
   return (
-    <section className="section invitation" id="invitation" aria-labelledby="invitation-title">
-      <div className="container">
-        <article className="card-invite reveal">
-          <CornerFlourish className="corner corner--tl" />
-          <CornerFlourish className="corner corner--tr" />
-          <CornerFlourish className="corner corner--bl" />
-          <CornerFlourish className="corner corner--br" />
+    <section className="section invitation" id="invitation">
+      <div className="paper-card tamil reveal">
+        <Corner className="c-tl" />
+        <Corner className="c-tr" />
+        <Corner className="c-bl" />
+        <Corner className="c-br" />
 
-          <Lotus className="card-invite__lotus" />
+        <p className="inv-house">{t.house}</p>
+        <h2 className="inv-heading">{t.heading}</h2>
+        <Divider />
 
-          <h2 id="invitation-title" className="sr-only">
-            Invitation
-          </h2>
+        <p className="inv-label">{card.label1}</p>
+        <p className="inv-name">
+          {groom.name}, <small>{groom.degree}</small>
+        </p>
+        <p className="inv-amp">❦</p>
+        <p className="inv-name">
+          {bride.name}, <small>{bride.degree}</small>
+        </p>
 
-          <blockquote className="poem">
-            {invitation.poem.map((line, i) => (
-              <span className="poem__line" style={{ "--d": i }} key={i}>
-                {line}
-              </span>
-            ))}
-          </blockquote>
+        <p className="inv-label">{card.label2}</p>
+        <p className="inv-value">{card.date}</p>
+        <p className="inv-label">{card.label3}</p>
+        <p className="inv-value">{card.venue}</p>
+      </div>
 
-          <KolamDivider />
-
-          <p className="card-invite__lead">{invitation.inviteLine}</p>
-
-          <p className="card-invite__name">{fullName(groom)}</p>
-          <p className="card-invite__amp" aria-label="and">&amp;</p>
-          <p className="card-invite__name">{fullName(bride)}</p>
-
-          <p className="card-invite__day">
-            <time dateTime={wedding.marriage.date}>{invitation.weddingDay}</time>
-          </p>
-        </article>
+      <div className="english tamil reveal">
+        <h2 className="section-title">{invite.title}</h2>
+        <p className="inv-line">{invite.line}</p>
+        <p className="inv-en-name">
+          {groom.name}
+          <small>{groom.degree}</small>
+        </p>
+        <span className="script inv-with">&amp;</span>
+        <p className="inv-en-name">
+          {bride.name}
+          <small>{bride.degree}</small>
+        </p>
+        <p className="inv-when">
+          {invite.when.split("\n").map((l, i) => (
+            <span key={i}>
+              {i > 0 && <br />}
+              {l}
+            </span>
+          ))}
+        </p>
       </div>
     </section>
   );

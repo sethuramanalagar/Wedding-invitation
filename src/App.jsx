@@ -1,118 +1,120 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from "react";
-import Hero, { RoyalDoors } from "./components/Hero.jsx";
-import Couple from "./components/Couple.jsx";
-import Gallery from "./components/Gallery.jsx";
-import WeddingScene from "./components/WeddingScene.jsx";
+import { useEffect, useRef, useState } from "react";
+import { wedding } from "./config/wedding.js";
+import Opening from "./components/Opening.jsx";
+import Hero from "./components/Hero.jsx";
 import Invitation from "./components/Invitation.jsx";
 import Countdown from "./components/Countdown.jsx";
-import EventsTimeline from "./components/EventsTimeline.jsx";
-import Venue from "./components/Venue.jsx";
-import RoutePlanner from "./components/RoutePlanner.jsx";
-import CalendarSection from "./components/CalendarButton.jsx";
-import ShareButton from "./components/ShareButton.jsx";
-import RSVP from "./components/RSVP.jsx";
-import Footer from "./components/Footer.jsx";
-import MusicPlayer from "./components/MusicPlayer.jsx";
-import ThemePicker from "./components/ThemePicker.jsx";
-import DesktopAside from "./components/DesktopAside.jsx";
-import TapBurst from "./components/TapBurst.jsx";
-import { wedding } from "./config/wedding.js";
+import Ceremony from "./components/Ceremony.jsx";
+import Events from "./components/Events.jsx";
+import Gallery from "./components/Gallery.jsx";
+import Closing from "./components/Closing.jsx";
+import MusicPlayer, { music } from "./components/MusicPlayer.jsx";
+import { reducedMotion } from "./utils/helpers.js";
+import { LangProvider, LangSwitch, useLang } from "./i18n.jsx";
 
-const prefersReducedMotion = () =>
-  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-
-/** Reveal `.reveal` elements as they scroll into view (one shared observer). */
-function useScrollReveal(active) {
+/* Fade/slide sections in as they scroll into view */
+function useReveal(active) {
   useEffect(() => {
     if (!active) return;
-    const els = Array.from(document.querySelectorAll(".reveal:not(.is-visible)"));
-    if (!("IntersectionObserver" in window) || prefersReducedMotion()) {
-      els.forEach((el) => el.classList.add("is-visible"));
-      return;
-    }
+    const els = document.querySelectorAll(".reveal, .divider");
     const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            io.unobserve(entry.target);
+      (entries) =>
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            io.unobserve(e.target);
           }
-        });
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+        }),
+      { threshold: 0.15, rootMargin: "0px 0px -6% 0px" },
     );
     els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [active]);
 }
 
-export default function App() {
-  const [opening, setOpening] = useState(false);
-  const [opened, setOpened] = useState(false);
-  const [doors, setDoors] = useState(false);
-
-  // Keep the page on the cover until the guest opens the invitation.
-  useLayoutEffect(() => {
-    document.documentElement.classList.toggle("is-locked", !opened);
-  }, [opened]);
-
-  useScrollReveal(opened);
-
-  const handleOpen = useCallback(() => {
-    if (opening || opened) return;
-    const reduced = prefersReducedMotion();
-    setOpening(true);
-    // Lets the music player start inside this tap (only if music.playOnOpen)
-    window.dispatchEvent(new Event("invitation:open"));
-
-    const reveal = () => {
-      setOpened(true);
-      requestAnimationFrame(() => {
-        // Jump (behind the doors) to the couple, then let the doors swing open.
-        document.getElementById("couple")?.scrollIntoView({ behavior: "auto", block: "start" });
-        // Move keyboard / screen-reader focus into the invitation.
-        document.getElementById("couple-title")?.focus({ preventScroll: true });
-      });
+/* Tap anywhere → a small burst of petals */
+function usePetalTap(active) {
+  useEffect(() => {
+    if (!active || reducedMotion()) return;
+    const colors = ["#e0601e", "#f2a541", "#c2185b", "#ffd166"];
+    const onTap = (e) => {
+      if (e.target.closest("button, a, iframe, .player")) return;
+      for (let i = 0; i < 9; i++) {
+        const p = document.createElement("i");
+        p.className = "tap-petal";
+        const a = Math.random() * Math.PI * 2;
+        const r = 30 + Math.random() * 50;
+        p.style.cssText = `left:${e.clientX}px;top:${e.clientY}px;background:${colors[i % 4]};--x:${Math.cos(a) * r}px;--y:${Math.sin(a) * r - 20}px;--r:${Math.random() * 360}deg`;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1300);
+      }
     };
+    window.addEventListener("pointerdown", onTap);
+    return () => window.removeEventListener("pointerdown", onTap);
+  }, [active]);
+}
 
-    if (reduced) {
-      reveal();
-      return;
-    }
-    // 1) Palace doors appear over the cover (identical to it, so it looks seamless)
-    setDoors(true);
-    // 2) Behind them, the page moves to the couple section
-    window.setTimeout(reveal, 60);
-    // 3) Doors finish swinging open, then leave the page
-    window.setTimeout(() => setDoors(false), 2300);
-  }, [opening, opened]);
+export default function App() {
+  return (
+    <LangProvider>
+      <Invitation_ />
+    </LangProvider>
+  );
+}
+
+function Invitation_() {
+  const { t, lang } = useLang();
+  const [opened, setOpened] = useState(false);
+  const [coverGone, setCoverGone] = useState(false);
+  const main = useRef(null);
+
+  useReveal(opened);
+  usePetalTap(coverGone);
+
+  useEffect(() => {
+    document.body.style.overflow = coverGone ? "" : "hidden";
+  }, [coverGone]);
 
   return (
-    <>
-      <Hero opened={opened} opening={opening} onOpen={handleOpen} />
+    <div className="stage">
+      <aside className="side side-l" aria-hidden="true">
+        <p className="tamil">{t.house}</p>
+        <p className="script nick">{t.groom.short}</p>
+        <p className="side-amp">&amp;</p>
+        <p className="script nick">{t.bride.short}</p>
+      </aside>
 
-      <main id="main" className={`page ${opened ? "is-open" : ""}`} inert={!opened}>
-        <Couple />
-        <Gallery />
-        <Invitation />
-        <WeddingScene />
-        <Countdown />
-        <EventsTimeline />
-        <Venue />
-        <RoutePlanner />
-        <CalendarSection />
-        <ShareButton />
-        <RSVP />
-      </main>
-
-      <div inert={!opened}>
-        <Footer />
+      <div className="phone">
+        {!coverGone && (
+          <Opening
+            onOpen={() => {
+              setOpened(true);
+              if (wedding.music.playOnOpen) music.start();
+            }}
+            onDone={() => {
+              setCoverGone(true);
+              main.current?.focus({ preventScroll: true });
+            }}
+          />
+        )}
+        <main ref={main} tabIndex={-1} className={`site ${opened ? "is-open" : ""}`}>
+          <Hero />
+          <Invitation />
+          <Countdown />
+          <Ceremony />
+          <Events />
+          <Gallery />
+          <Closing />
+        </main>
+        {opened && <MusicPlayer />}
+        {coverGone && <LangSwitch className="float-lang" key={lang} />}
       </div>
-      <MusicPlayer visible={opened} />
-      {wedding.theme?.guestCanChange !== false && <ThemePicker visible={opened} />}
-      {doors && <RoyalDoors />}
-      <DesktopAside />
-      <TapBurst enabled={opened} />
-    </>
+
+      <aside className="side side-r" aria-hidden="true">
+        <p className="tamil">{t.side[0]}</p>
+        <p className="side-date">{t.side[1]}</p>
+        <p className="tamil">{t.side[2]}</p>
+      </aside>
+    </div>
   );
 }

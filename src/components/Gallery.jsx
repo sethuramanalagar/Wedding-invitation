@@ -1,106 +1,65 @@
 import { useEffect, useRef, useState } from "react";
-import { Camera, ChevronLeft, ChevronRight } from "lucide-react";
-import { wedding } from "../config/wedding.js";
-import { asset } from "../utils/asset.js";
-import { galleryPhotos } from "../utils/media.js";
-import { KolamDivider, Petals, Sparkles } from "./Ornaments.jsx";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useLang } from "../i18n.jsx";
+import { galleryPhotos } from "../utils/helpers.js";
+import { Divider } from "./Ornaments.jsx";
 
-/** "Our Moments" — royal animated photo slideshow (auto-plays, swipeable). */
+const photos = galleryPhotos();
+
 export default function Gallery() {
-  // Every photo in public/images (auto-discovered at build time)
-  const photos = galleryPhotos();
+  const { t } = useLang();
   const [i, setI] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const startX = useRef(null);
+  const touch = useRef(null);
   const n = photos.length;
 
   useEffect(() => {
-    if (n < 2 || paused) return;
-    const id = setInterval(() => setI((v) => (v + 1) % n), 5200);
+    if (n < 2) return;
+    const id = setInterval(() => setI((x) => (x + 1) % n), 4500);
     return () => clearInterval(id);
-  }, [n, paused]);
+  }, [n, i]);
 
-  if (!n) return null;
-  const go = (d) => {
-    setPaused(true);
-    setI((v) => (v + d + n) % n);
-  };
+  if (n < 2) return null; // the main couple photo is already shown at the top
+  const go = (d) => setI((x) => (x + d + n) % n);
 
   return (
-    <section className="section gallery" id="moments" aria-labelledby="moments-title">
-      <div className="gallery__velvet" aria-hidden="true" />
-      <Sparkles count={14} />
-      <div className="container">
-        <p className="eyebrow reveal">{wedding.text.gallery.eyebrow}</p>
-        <h2 id="moments-title" className="section-title reveal">
-          <span className="script foil gallery__title">{wedding.text.gallery.title}</span>
-        </h2>
-        <KolamDivider className="reveal" />
-
-        <div
-          className="gallery__frame reveal"
-          onPointerDown={(e) => (startX.current = e.clientX)}
-          onPointerUp={(e) => {
-            if (startX.current == null) return;
-            const dx = e.clientX - startX.current;
-            if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
-            startX.current = null;
-          }}
-          role="region"
-          aria-roledescription="carousel"
-          aria-label="Photo gallery"
-        >
-          {photos.map((p, k) => (
-            <figure
-              key={p.src}
-              className={`gallery__slide ${k === i ? "is-active" : ""}`}
-              aria-hidden={k !== i}
-            >
-              <img src={asset(p.src)} alt={p.alt || ""} loading="lazy" decoding="async" draggable="false" />
-              {p.credit && (
-                <figcaption className="gallery__credit">
-                  <Camera size={11} strokeWidth={1.8} aria-hidden="true" /> {p.credit}
-                </figcaption>
-              )}
-            </figure>
-          ))}
-          <span className="gallery__shine" aria-hidden="true" />
-          <Petals count={6} />
-          <span className="gallery__corner gallery__corner--tl" aria-hidden="true" />
-          <span className="gallery__corner gallery__corner--tr" aria-hidden="true" />
-          <span className="gallery__corner gallery__corner--bl" aria-hidden="true" />
-          <span className="gallery__corner gallery__corner--br" aria-hidden="true" />
-          {n > 1 && (
-            <>
-              <button type="button" className="gallery__nav gallery__nav--prev" onClick={() => go(-1)} aria-label="Previous photo">
-                <ChevronLeft size={20} />
-              </button>
-              <button type="button" className="gallery__nav gallery__nav--next" onClick={() => go(1)} aria-label="Next photo">
-                <ChevronRight size={20} />
-              </button>
-            </>
-          )}
-        </div>
-
+    <section className="section gallery" id="moments">
+      <p className="eyebrow tamil">{t.galleryEyebrow}</p>
+      <h2 className="section-title tamil">{t.galleryTitle}</h2>
+      <Divider />
+      <div
+        className="gal-frame reveal"
+        onTouchStart={(e) => (touch.current = e.touches[0].clientX)}
+        onTouchEnd={(e) => {
+          if (touch.current == null) return;
+          const dx = e.changedTouches[0].clientX - touch.current;
+          if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+          touch.current = null;
+        }}
+      >
+        {photos.map((p, k) => (
+          <figure key={p.src} className={`gal-slide ${k === i ? "on" : ""}`} aria-hidden={k !== i}>
+            <img src={p.src} alt={p.alt} loading="lazy" />
+            {p.credit && <figcaption>📷 {p.credit}</figcaption>}
+          </figure>
+        ))}
         {n > 1 && (
-          <div className="gallery__thumbs reveal">
-            {photos.map((p, k) => (
-              <button
-                key={p.src}
-                type="button"
-                className={`gallery__thumb ${k === i ? "is-active" : ""}`}
-                onClick={() => {
-                  setPaused(true);
-                  setI(k);
-                }}
-                aria-label={`Show photo ${k + 1}`}
-              >
-                <img src={asset(p.src)} alt="" loading="lazy" />
-              </button>
-            ))}
-          </div>
+          <>
+            <button className="gal-nav l" onClick={() => go(-1)} aria-label="Previous photo">
+              <ChevronLeft />
+            </button>
+            <button className="gal-nav r" onClick={() => go(1)} aria-label="Next photo">
+              <ChevronRight />
+            </button>
+          </>
         )}
       </div>
+      {n > 1 && (
+        <div className="gal-dots">
+          {photos.map((p, k) => (
+            <button key={p.src} className={k === i ? "on" : ""} onClick={() => setI(k)} aria-label={`Photo ${k + 1}`} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }

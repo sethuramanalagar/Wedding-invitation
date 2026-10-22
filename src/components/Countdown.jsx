@@ -1,71 +1,52 @@
 import { useEffect, useState } from "react";
 import { wedding } from "../config/wedding.js";
-import { eventStart, splitDuration, weddingPhase } from "../utils/time.js";
-import { KolamDivider } from "./Ornaments.jsx";
+import { useLang } from "../i18n.jsx";
+import { timeLeft } from "../utils/helpers.js";
 
-const target = eventStart(wedding.marriage);
-const pad = (n) => String(n).padStart(2, "0");
+const { countdownTo } = wedding;
+const wedEnd = wedding.events.find((e) => e.id === "wedding")?.end;
 
-function useNow() {
-  const [now, setNow] = useState(() => new Date());
-  useEffect(() => {
-    // Align ticks to the start of each second so the display never skips.
-    let id;
-    const tick = () => {
-      setNow(new Date());
-      id = setTimeout(tick, 1000 - (Date.now() % 1000));
-    };
-    id = setTimeout(tick, 1000 - (Date.now() % 1000));
-    return () => clearTimeout(id);
-  }, []);
-  return now;
+function Digit({ value, label }) {
+  const v = String(value).padStart(2, "0");
+  return (
+    <div className="cd-unit">
+      <div className="cd-tile">
+        <span key={v} className="cd-num">
+          {v}
+        </span>
+      </div>
+      <span className="cd-label tamil">{label}</span>
+    </div>
+  );
 }
 
 export default function Countdown() {
-  const now = useNow();
-  const phase = weddingPhase(now);
-  const { days, hours, minutes, seconds } = splitDuration(target - now);
+  const { t } = useLang();
+  const c = t.countdown;
+  const [left, setLeft] = useState(() => timeLeft(countdownTo));
+  useEffect(() => {
+    const id = setInterval(() => setLeft(timeLeft(countdownTo)), 1000);
+    return () => clearInterval(id);
+  }, []);
 
-  const units = [
-    { key: "d", label: wedding.text.countdown.days, value: days },
-    { key: "h", label: wedding.text.countdown.hours, value: hours },
-    { key: "m", label: wedding.text.countdown.minutes, value: minutes },
-    { key: "s", label: wedding.text.countdown.seconds, value: seconds },
-  ];
+  const after = wedEnd && Date.now() >= new Date(wedEnd).getTime();
 
   return (
-    <section className="section countdown" id="countdown" aria-labelledby="countdown-title">
-      <div className="container">
-        <p className="eyebrow reveal">{wedding.text.countdown.eyebrow}</p>
-        <h2 id="countdown-title" className="section-title reveal">
-          {wedding.text.countdown.title}
-        </h2>
-        <p className="countdown__when reveal">
-          {wedding.marriage.displayDate} · {wedding.marriage.displayTime.split("–")[0].trim()}
-        </p>
-
-        {phase === "before" ? (
-          <div className="countdown__grid reveal" role="timer" aria-live="off">
-            {units.map((u) => (
-              <div className="countdown__unit" key={u.key}>
-                <span className="countdown__value" key={u.value}>
-                  {u.key === "d" ? u.value : pad(u.value)}
-                </span>
-                <span className="countdown__label">{u.label}</span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p className="countdown__message reveal" role="status">
-            {phase === "ongoing"
-              ? wedding.countdown.begunMessage
-              : wedding.countdown.continueMessage}
-          </p>
-        )}
-
-        <KolamDivider className="countdown__divider" />
-        <p className="tz-note">{wedding.text.countdown.timezoneNote}</p>
-      </div>
+    <section className="section velvet countdown">
+      <div className="velvet-pattern" aria-hidden="true" />
+      <p className="eyebrow light tamil">{c.eyebrow}</p>
+      <h2 className="section-title light tamil">{c.title}</h2>
+      {left.ms > 0 ? (
+        <div className="cd-row" role="timer" aria-live="off">
+          <Digit value={left.d} label={c.units[0]} />
+          <Digit value={left.h} label={c.units[1]} />
+          <Digit value={left.m} label={c.units[2]} />
+          <Digit value={left.s} label={c.units[3]} />
+        </div>
+      ) : (
+        <p className="cd-done tamil">{after ? c.after : c.started}</p>
+      )}
+      <p className="cd-sub tamil">{c.sub}</p>
     </section>
   );
 }

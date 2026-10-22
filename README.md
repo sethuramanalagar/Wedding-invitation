@@ -24,99 +24,88 @@ npm run preview      # preview the production build
 ## B. Photos
 
 ```text
-public/images/couple-cutout.webp  ← couple with the background removed (royal stage)
-public/images/couple.jpg          ← original photo (used only if the cutout is missing)
-public/images/groom.webp          ← round portrait, background removed
-public/images/bride.webp          ← round portrait, background removed
-public/images/og-image.jpg        ← WhatsApp / social preview (1200 × 630)
+public/images/couple.jpg       ← main photo (full, uncropped original, AI-upscaled 2×)
+public/images/couple.webp      ← same photo, smaller file for phones
+public/images/couple-sm.webp   ← half size for small screens
+public/images/groom.webp       ← round portrait used in the wedding animation
+public/images/bride.webp       ← round portrait used in the wedding animation
+public/images/og-image.jpg     ← WhatsApp / social preview (1200 × 630)
 ```
 
-The pink studio backdrop was removed with an AI cut-out, so the couple stands
-on an animated royal stage whose colours follow the chosen theme. To use a
-new photo, replace the files with the same names. Use a transparent WebP or
-PNG for the cutouts (remove.bg or `rembg` can make one).
+The photo is no longer cut out of its background (the cut-out was what spoiled
+the ears and cropped the hands). The full original is shown inside a gold
+palace arch, sharpened and gently tinted at the edges so the pink backdrop
+blends with the ivory-and-gold theme. To use a new photo, replace the files
+with the same names (keep a 2:3 portrait shape for `couple.jpg`).
 
-## All on-screen text is editable
+**Our Moments** slideshow appears automatically once there are **two or more**
+photos in `public/images/` (besides the files listed above). Add `alt` text or a
+credit via `gallery` in `src/config/wedding.js`.
 
-Every heading, label and button lives in the `text` block of
-`src/config/wedding.js`. Set any value to `""` to hide it. For example,
-`venues.pending` (the old "Venue to be announced") is empty, so an unset
-reception venue simply isn't shown. Nicknames used in the cartoon banner are
-`groom.nickname` / `bride.nickname`.
+## Design
 
-## Photos: every image in the images folder is shown
+- **Royal Ivory & Gold** theme taken from the printed card: ivory paper, gold
+  foil, maroon velvet, peacock accents, Tamil text in Noto Serif Tamil.
+- **Opening:** a velvet envelope with a golden wax seal (S S monogram). Tapping
+  the seal cracks it, the flap swings open, the "Sethu weds Sudha" card rises
+  out with a burst of petals and a golden flash, then the invitation appears.
+- **Hero:** marigold toran, swinging temple bells, gold-foil names, the couple in
+  a double gold palace arch with a turning halo and lamps.
+- **Invitation:** the Tamil wording of the printed card, then an English version.
+- **The Royal Wedding animation** (≈22 s, loops while on screen; tap the dots to
+  jump): a mandapam at pre-dawn (stars, moon, nadaswaram notes, sacred fire) →
+  மாலை மாற்றல் (garlands fly across and swap) → மாங்கல்ய தாரணம் (the golden thali
+  descends with a glow) → அட்சதை (rice and petal shower as the sun rises) →
+  "Sethu ❤ Sudha" with a heartbeat and fireworks.
+- **Events:** illustrated cards (evening lamps, temple at pre-dawn, sunrise feast)
+  with Tamil labels, map, directions, save-the-date and a tap-to-load map.
+- **Family:** the "அன்புடன் அழைக்கும்" block from the printed card.
+  The phone number is stored but hidden; set `hosts.showPhone: true` to show a
+  Call button.
 
-Every photo in **`public/images/`** appears in the "Our Moments" slideshow
-automatically (in name order). The site's own graphics are skipped (preview
-image, cut-outs and portraits). Add `alt` text or a photographer credit via
-`gallery` in `src/config/wedding.js`, or hide a photo with
-`galleryExclude: ["file.jpg"]`.
+## Tamil & English versions
 
-## Phone view everywhere
+The whole invitation exists in **two complete versions**: Tamil and English.
+Guests switch with the **தமிழ் | English** button (on the envelope, then at the
+top-right of the page). Their choice is remembered on their phone.
 
-The invitation is designed for phones. On a laptop or desktop browser, the same
-phone layout is shown in a centred, framed column on a royal velvet backdrop,
-with the couple's names and wedding details on the sides.
+Share a link that opens straight in one language:
 
-## Our Moments, The Royal Wedding & Venues
+```text
+https://your-site.vercel.app/?lang=ta     ← Tamil version
+https://your-site.vercel.app/?lang=en     ← English version
+```
 
-- **Our Moments**: an animated photo slideshow (auto-plays, swipe or tap the
-  thumbnails). Photos are listed in `gallery` in `src/config/wedding.js`.
-  Photo credit: Leaf9Studios.
-- **Sethu weds Sudha**: an animated cartoon story (about 20 seconds, loops while
-  on screen). Sethu and Sudha walk in, blink and smile at each other, raise and
-  swap garlands, then Sethu ties the golden thali while the band plays faster.
-  A rice-and-petal (akshathai) shower falls as the royal elephants raise their
-  trunks, and they hold hands under fireworks and a swinging "Sethu weds Sudha"
-  banner. Cartoon nadaswaram and thavil players perform throughout. The title,
-  eyebrow and captions are in `text.scene`.
-- **More animation**: kolam dividers draw themselves, countdown digits flip,
-  sky lanterns and fireworks rise in the closing, and tapping anywhere
-  releases a small burst of flower petals.
-- **Venues**: illustrated cards (temple at pre-dawn, hall at sunrise, evening
-  reception) with date, time, address, a map that loads when scrolled to, and
-  directions.
+Without `?lang=`, the site opens in `defaultLang` (Tamil) from
+`src/config/wedding.js`. All wording for each language is in `content.ta`
+and `content.en` in that file. The Share / WhatsApp buttons send the link in
+the language the guest is viewing.
 
-## Royal themes
+## C. Music: Tamil songs
 
-Four palettes: **Maharaja Maroon** (default), **Royal Emerald**,
-**Midnight Sapphire** and **Rani Pink**. Set the default in
-`src/config/wedding.js`:
+> **Why no song played:** the music folder was empty. The site plays only the
+> song files you add. It does not include any songs itself.
+
+**Put your Tamil song files in `public/music/`** (MP3 or M4A). Files in
+`src/assets/music/` are picked up too. Tamil names and spaces in file names are fine. They all play
+automatically, one after another, starting when the guest taps the seal.
+Nothing to code: rebuild or redeploy and they're in.
+
+To show the song name in Tamil, skip a long intro, or set the order, list the
+file in `music.tracks` in `src/config/wedding.js`:
 
 ```js
-theme: { default: "maharaja", guestCanChange: true },
+tracks: [
+  { file: "01-song.mp3", title: "பாடலின் பெயர்", subtitle: "Movie name", startAt: 8 },
+],
 ```
 
-With `guestCanChange: true`, guests get a palette button (bottom-left) to try
-other themes. Their choice is remembered on their own phone only. Set it to
-`false` to lock everyone to your default. The colours are defined in
-`src/index.css` under `[data-theme=…]`.
+The floating gold disc (bottom-right) shows the song title, with
+play/pause and next/previous. Music pauses when the guest leaves the tab and
+resumes when they come back. If the folder is empty, the player is hidden.
 
-## C. Music: every file in the music folder plays
-
-**Put any music files in `public/music/`** (MP3, M4A, OGG, WAV, …).
-**All of them play automatically**, one after another, in name order. You
-don't need to edit any code: rebuild or redeploy and they're in. Titles are made
-from the file names (`nadaswaram-kalyanam.mp3` → "Nadaswaram Kalyanam").
-
-Optional: to give a file a nicer title, subtitle or a licence credit, or to set
-the playing order, list it in `music.tracks` in `src/config/wedding.js`
-(matched by file name). Credits appear in the footer only for files that are
-present.
-
-Recommended free-to-use mangala vadhyam recordings (save into `public/music/`):
-- Nadaswaram & thavil, live at a Chennai wedding (CC BY 4.0, credit already
-  configured): https://cdn.freesound.org/previews/320/320245_43-hq.mp3 → save as `mangala-vadhyam-chennai.mp3`
-- https://pixabay.com/music/india-south-india-nadaswaram-thavil-kappi-raga-358257/
-- https://pixabay.com/music/india-raga-valachi-nadaswaram-6-8-382924/
-- https://pixabay.com/music/wedding-traditional-wedding-ceremonial-vibe-with-shehna-376293/
-
-Music starts when the guest taps **Open Invitation** (`music.playOnOpen`).
-After your files, the four bundled instrumentals in `src/assets/music/` play
-too (every file dropped there is included as well). If nothing can play, a live
-veena piece is generated in the browser.
-
-Only use music you have the right to share publicly.
+Film songs are copyrighted, and a public website counts as sharing them. Only
+add songs you have the right to use.
 
 ### "Music not found" / blank page?
 Browsers **do not run this site from a file on your disk**. Double-clicking
@@ -139,55 +128,24 @@ Blank fields (`""`) are hidden gracefully.
 
 ### Adding the reception venue
 
-```js
-reception: {
-  ...
-  venue: "Hall name",
-  address: "",          // optional street / area
-  location: "Town",
-  googleMapsUrl: "https://maps.app.goo.gl/...",
-}
-```
-
-Until `venue` is filled, the site shows **"Venue to be announced"** and a
-disabled **"Map coming soon"** button on the reception card.
-
-### RSVP (hidden by default)
+In `events` (first entry, `id: "reception"`):
 
 ```js
-rsvp: {
-  enabled: true,
-  phone: "+91XXXXXXXXXX",     // Call button
-  whatsapp: "91XXXXXXXXXX",   // WhatsApp button (country code, digits only)
-}
+venue: "Hall name",
+address: "Street, town",
+mapsQuery: "Hall name, town, Tamil Nadu",   // used for map, directions, embedded map
+googleMapsUrl: "https://maps.app.goo.gl/...", // optional exact link
 ```
 
-## E. Google Maps & the "How to reach us" planner
+Until `venue` is filled, the card shows **"Venue to be announced"**.
 
-The temple and hall already have Google Maps links, built from their
-addresses (the temple uses its plus code `8RC8+Q2P`). Each venue card has:
-**Open in Google Maps**, **Get directions** (from the guest's location) and
-a **Tap to show map** preview, which loads only when tapped so the page stays
-fast. There is also a **Temple → Hall** route button.
+## E. Google Maps
 
-**How to reach us** section: a guest picks Temple / Hall, then types their
-city (or taps Chennai, Puducherry, Trichy, Bengaluru…). An animated bus
-travels the route *city → towns on the way → Sirkazhi → Thandavankulam →
-venue*. Below the animation are bus and train steps, the last stretch, and
-live Google Maps directions (bus/train or car). Any town not in the list
-still gets live directions.
-
-All the journey text is in `travel` inside `src/config/wedding.js`. Edit
-distances, add towns, or add local bus details there.
-
-### Adding a Maps link for the reception
-
-1. Open the venue in Google Maps → **Share** → **Copy link**.
-2. Paste it into the matching `googleMapsUrl` field in `src/config/wedding.js`
-   (`reception`, `marriage` or `postWedding`).
-
-The **Open in Google Maps** button appears automatically for any venue with a
-URL, both on its event card and in the Venues section. Empty URL → no button.
+The temple and hall have map buttons built from `mapsQuery` (the temple uses
+its plus code `8RC8+Q2P`). Each card has **Open Map**, **Directions** (from
+the guest's location), **Save date** (Google Calendar) and a **Tap to show
+map** preview, which loads only when tapped so the page stays fast. To pin an
+exact spot, paste a Google Maps share link into `googleMapsUrl`.
 
 ## F. How to deploy (Vercel)
 
@@ -209,71 +167,31 @@ uses relative paths, so it also works from a sub-folder.
 
 ---
 
-## Features
-
-- **Opening:** royal velvet cover with a scalloped palace-arch frame, swinging
-  lanterns, gold dust and gold-foil names. **Open Invitation** splits it into
-  two palace doors, with brass ring handles, that swing open onto the couple.
-- **Royal stage:** the cut-out couple inside a lobed palace arch, with a
-  marigold garland, turning light rays, a mandala, a pulsing spotlight,
-  drifting petals and a shine sweep. Their portraits sit in turning gold rings.
-- **Couple:** first names in script, arched photo frame with graceful fallback.
-- **Invitation card:** the poem from the printed invitation, then the formal
-  invitation line, names and date.
-- **Live countdown** to **13 Nov 2026, 4:00 AM India time**. It is timezone-safe:
-  guests abroad see the same countdown. From 4:00 AM it shows
-  *"The Wedding Has Begun ❤️"*, and from 6:00 AM *"The celebrations continue..."*.
-- **Timeline:** Reception (warm evening), then **The Wedding** (deep pre-dawn,
-  temple arch, strongest emphasis), then post-wedding (soft sunrise).
-- **Venues** with addresses, Google Maps links, directions and a tap-to-load map.
-- **How to reach us:** an animated route planner from 15 cities and towns, plus live
-  directions from anywhere.
-- **Add to Calendar:** `.ics` files generated in the browser (per event or all
-  three), plus Google Calendar links, which are handy inside WhatsApp's in-app
-  browser.
-- **Share:** native share sheet on phones, a WhatsApp button, and Copy Link
-  everywhere.
-- **Optional music** and **optional RSVP**.
-- **Link previews:** title, description, Open Graph and Twitter tags are
-  generated from the config at build time (`vite.config.js`). The preview
-  image is `public/images/og-image.jpg` (1200 × 630).
-- **Accessibility:** semantic headings, keyboard-operable, focus moves into the
-  invitation on open, `prefers-reduced-motion` respected.
-- **Performance:** fonts are self-hosted (Latin subset only, no Google Fonts
-  request), all ornaments are inline SVG, animations are CSS-only, and the only
-  runtime dependencies are React and Lucide icons.
-
 ## Project structure
 
 ```text
 wedding-invitation/
 ├── public/
 │   ├── favicon.svg
-│   ├── images/
-│   │   ├── og-image.jpg        ← link-preview image
-│   │   └── couple.jpg          ← add your photo here
-│   └── music/
-│       └── wedding.mp3         ← add music here (optional)
+│   ├── images/                 couple photo, portraits, og-image
+│   └── music/                  ← put your Tamil songs here
 ├── src/
 │   ├── components/
-│   │   ├── Hero.jsx            Opening cover
-│   │   ├── Couple.jsx          Names + photo
-│   │   ├── Invitation.jsx      Poem & invitation card
-│   │   ├── Countdown.jsx       Live IST countdown
-│   │   ├── EventsTimeline.jsx  Evening → pre-dawn → sunrise journey
-│   │   ├── EventCard.jsx       One event
-│   │   ├── Venue.jsx           Venues + Maps button logic
-│   │   ├── CalendarButton.jsx  .ics + Google Calendar
-│   │   ├── ShareButton.jsx     Web Share / WhatsApp / Copy link
-│   │   ├── MusicPlayer.jsx     Floating music toggle
-│   │   ├── RSVP.jsx            Optional RSVP
-│   │   ├── Footer.jsx          Closing
-│   │   └── Ornaments.jsx       Kolam, temple, lotus SVG motifs
+│   │   ├── Opening.jsx         Velvet envelope + wax seal cover
+│   │   ├── Hero.jsx            Toran, names, palace-arch photo, date
+│   │   ├── Invitation.jsx      Tamil card wording + English invitation
+│   │   ├── Countdown.jsx       Live IST countdown with flip digits
+│   │   ├── Ceremony.jsx        The animated mandapam wedding story
+│   │   ├── Events.jsx          Event cards, maps, calendar
+│   │   ├── Gallery.jsx         "Our Moments" slideshow (2+ photos)
+│   │   ├── Closing.jsx         Family block, closing, share buttons
+│   │   ├── MusicPlayer.jsx     Tamil song playlist player
+│   │   └── Ornaments.jsx       Toran, arch, bells, diya, peacock feather SVGs
 │   ├── config/wedding.js       ★ all wedding information
-│   ├── utils/                  time (IST), calendar (.ics), asset paths
+│   ├── utils/helpers.js        maps, calendar (.ics), playlist, gallery, time
 │   ├── App.jsx
 │   ├── main.jsx
-│   └── index.css
+│   └── index.css               the whole theme
 ├── index.html
 ├── vite.config.js
 └── package.json
