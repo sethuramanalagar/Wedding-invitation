@@ -23,8 +23,15 @@ export const archMask = `url("data:image/svg+xml,${encodeURIComponent(
   `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300' preserveAspectRatio='none'><path d='${ARCH_PATH}' fill='black'/></svg>`,
 )}")`;
 
-export function ArchBorder({ className = "" }) {
+export function ArchBorder({ className = "", chase = false }) {
   const g = useId();
+  if (chase)
+    return (
+      <svg className={className} viewBox="0 0 200 300" preserveAspectRatio="none" aria-hidden="true">
+        <path className="chase-a" d={ARCH_PATH} fill="none" stroke="#fff3c4" strokeWidth="5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+        <path className="chase-b" d={ARCH_PATH} fill="none" stroke="#ffb347" strokeWidth="5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+      </svg>
+    );
   return (
     <svg className={className} viewBox="0 0 200 300" preserveAspectRatio="none" aria-hidden="true">
       <GoldDefs id={g} />
@@ -165,17 +172,69 @@ export function Feather({ className = "", style }) {
   );
 }
 
-/* Small monogram used on the wax seal */
-export function Monogram({ a = "S", b = "S", className = "" }) {
+/* "S & R" monogram — decorative capitals with a script ampersand */
+export function Monogram({ a = "S", b = "R", className = "" }) {
   return (
     <svg className={className} viewBox="0 0 100 100" aria-hidden="true">
-      <text x="34" y="64" textAnchor="middle" fontFamily="Pinyon Script, cursive" fontSize="46" fill="currentColor">
+      <text x="27" y="64" textAnchor="middle" fontFamily="'Cinzel Decorative', serif" fontWeight="700" fontSize="36" fill="currentColor">
         {a}
       </text>
-      <text x="66" y="70" textAnchor="middle" fontFamily="Pinyon Script, cursive" fontSize="46" fill="currentColor">
+      <text x="50" y="70" textAnchor="middle" fontFamily="'Great Vibes', cursive" fontSize="34" fill="currentColor" opacity=".85">
+        &amp;
+      </text>
+      <text x="73" y="64" textAnchor="middle" fontFamily="'Cinzel Decorative', serif" fontWeight="700" fontSize="36" fill="currentColor">
         {b}
       </text>
-      <path d="M50 30 C46 24 38 26 40 33 C42 38 50 42 50 42 C50 42 58 38 60 33 C62 26 54 24 50 30Z" fill="currentColor" opacity=".8" transform="translate(0 -6) scale(1)" />
     </svg>
+  );
+}
+
+/* Gold medallion with the monogram, glints and a turning halo */
+export function MonogramBadge({ a = "S", b = "R", className = "", onClick }) {
+  const g = useId();
+  return (
+    <button type="button" className={`mono-badge ${className}`} onClick={onClick} aria-label={`${a} & ${b}`}>
+      <span className="mono-halo" aria-hidden="true" />
+      <svg className="mono-ring" viewBox="0 0 120 120" aria-hidden="true">
+        <GoldDefs id={g} />
+        <circle cx="60" cy="60" r="56" fill="none" stroke={`url(#${g})`} strokeWidth="1.6" />
+        <circle cx="60" cy="60" r="50" fill="none" stroke={`url(#${g})`} strokeWidth=".8" strokeDasharray="1 4" strokeLinecap="round" />
+        {Array.from({ length: 12 }).map((_, i) => (
+          <path key={i} d="M60 2 C63 7 63 9 60 12 C57 9 57 7 60 2Z" fill={`url(#${g})`} transform={`rotate(${i * 30} 60 60)`} />
+        ))}
+      </svg>
+      <span className="mono-text" aria-hidden="true">
+        <span className="mono-l">{a}</span>
+        <span className="mono-amp">&amp;</span>
+        <span className="mono-l">{b}</span>
+      </span>
+      {[0, 1, 2, 3].map((i) => (
+        <span key={i} className={`glint g${i}`} aria-hidden="true" />
+      ))}
+    </button>
+  );
+}
+
+/* A drooping string of twinkling fairy lights */
+export function FairyLights({ count = 16, className = "" }) {
+  const colors = ["#ffd166", "#ff8fab", "#fff3c4", "#ffb347", "#9be7ff"];
+  return (
+    <div className={`fairy ${className}`} aria-hidden="true">
+      <svg viewBox="0 0 400 60" preserveAspectRatio="none">
+        <path d="M0 4 Q100 50 200 22 Q300 50 400 4" fill="none" stroke="#5a4a1a" strokeWidth="1.2" />
+      </svg>
+      {Array.from({ length: count }).map((_, i) => {
+        const x = (i + 0.5) / count;
+        const seg = x < 0.5 ? x * 2 : (x - 0.5) * 2;
+        const y0 = x < 0.5 ? 4 : 22, y1 = x < 0.5 ? 22 : 4;
+        const y = (1 - seg) ** 2 * y0 + 2 * (1 - seg) * seg * 50 + seg ** 2 * y1; // quadratic bezier
+        return (
+          <i
+            key={i}
+            style={{ left: `${x * 100}%`, top: `${(y / 60) * 100}%`, "--c": colors[i % colors.length], animationDelay: `${(i % 5) * 0.35}s` }}
+          />
+        );
+      })}
+    </div>
   );
 }

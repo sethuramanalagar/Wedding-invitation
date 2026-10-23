@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLang } from "../i18n.jsx";
 import { asset, reducedMotion } from "../utils/helpers.js";
 import { GoldDefs, Bell } from "./Ornaments.jsx";
+import { showerFlowers } from "./FlowerShower.jsx";
 
 const DURATIONS = [3800, 4200, 4200, 4000, 6500];
 
@@ -136,6 +137,13 @@ export default function Ceremony() {
   const [phase, setPhase] = useState(reducedMotion() ? 4 : -1);
   const [loop, setLoop] = useState(0);
   const [visible, setVisible] = useState(false);
+  const showered = useRef(false);
+  useEffect(() => {
+    if (phase === 4 && visible && !showered.current) {
+      showered.current = true;
+      showerFlowers();
+    }
+  }, [phase, visible]);
 
   useEffect(() => {
     const el = ref.current;

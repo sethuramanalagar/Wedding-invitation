@@ -47,7 +47,7 @@ credit via `gallery` in `src/config/wedding.js`.
 - **Royal Ivory & Gold** theme taken from the printed card: ivory paper, gold
   foil, maroon velvet, peacock accents, Tamil text in Noto Serif Tamil.
 - **Opening:** a velvet envelope with a golden wax seal (S S monogram). Tapping
-  the seal cracks it, the flap swings open, the "Sethu weds Sudha" card rises
+  the seal cracks it, the flap swings open, the "Sethuraman weds Ragasudha" card rises
   out with a burst of petals and a golden flash, then the invitation appears.
 - **Hero:** marigold toran, swinging temple bells, gold-foil names, the couple in
   a double gold palace arch with a turning halo and lamps.
@@ -59,9 +59,7 @@ credit via `gallery` in `src/config/wedding.js`.
   "Sethu ❤ Sudha" with a heartbeat and fireworks.
 - **Events:** illustrated cards (evening lamps, temple at pre-dawn, sunrise feast)
   with Tamil labels, map, directions, save-the-date and a tap-to-load map.
-- **Family:** the "அன்புடன் அழைக்கும்" block from the printed card.
-  The phone number is stored but hidden; set `hosts.showPhone: true` to show a
-  Call button.
+- **Blessing:** Thirukkural 45 (on married life) inside a kolam that draws itself.
 
 ## Tamil & English versions
 
@@ -83,29 +81,40 @@ the language the guest is viewing.
 
 ## C. Music: Tamil songs
 
-> **Why no song played:** the music folder was empty. The site plays only the
-> song files you add. It does not include any songs itself.
+The site has **two ways** to play music. It picks one automatically.
 
-**Put your Tamil song files in `public/music/`** (MP3 or M4A). Files in
-`src/assets/music/` are picked up too. Tamil names and spaces in file names are fine. They all play
-automatically, one after another, starting when the guest taps the seal.
-Nothing to code: rebuild or redeploy and they're in.
+1. **Your own MP3 files** (most reliable, works on every phone).
+   Put them in `public/music/` (or `src/assets/music/`). Tamil names and spaces
+   in file names are fine. To show a Tamil title or skip an intro, list the file
+   in `music.tracks` in `src/config/wedding.js`.
+2. **Tamil wedding songs from YouTube**, used when the music folder is empty.
+   Nine official uploads (Aaha Kalyanam, Kalyaana Maalai, Yaaro Yaarodi,
+   Marudaani, Kannalane, Munbe Vaa, Nenjukkul Peidhidum, Unakkenna Venum Sollu,
+   Maruvaarthai) are listed in `music.youtube`. They play in YouTube's own
+   player inside the **Wedding Songs** section. Guests can pick any song, and the
+   playlist continues by itself. To add a song, copy the id from its YouTube
+   link (`youtube.com/watch?v=THIS_PART`) into `music.youtube`.
 
-To show the song name in Tamil, skip a long intro, or set the order, list the
-file in `music.tracks` in `src/config/wedding.js`:
+When a guest taps the seal, the first song starts. On Android and laptops this
+works straight away. **iPhones often block sound that starts on its own**, so the
+gold disc then shows "▶ Tap to play music", and guests can also tap ▶ on the
+video. YouTube may show ads on some label videos.
 
-```js
-tracks: [
-  { file: "01-song.mp3", title: "பாடலின் பெயர்", subtitle: "Movie name", startAt: 8 },
-],
-```
+## How to Reach (bus routes)
 
-The floating gold disc (bottom-right) shows the song title, with
-play/pause and next/previous. Music pauses when the guest leaves the tab and
-resumes when they come back. If the folder is empty, the player is hidden.
+Guests choose **Temple** or **Hall**, then type their town (Tamil or English) or
+tap a quick chip. They see:
+- an animated route: town → towns on the way → Sirkazhi → Thandavankulam → venue
+- an approximate road distance
+- bus advice, plus train advice for towns on the Chennai Egmore – Mayiladuthurai
+  main line (station: Sirkazhi, SY)
+- the last stretch from Sirkazhi
+- buttons for live Google Maps bus/train or car directions from that town
 
-Film songs are copyrighted, and a public website counts as sharing them. Only
-add songs you have the right to use.
+A town that isn't in the list still gets the Google Maps buttons. All towns,
+routes and the last-stretch text are in `travel` in `src/config/wedding.js`.
+**Please check the last-stretch text with someone local** (which town bus or
+stop to use).
 
 ### "Music not found" / blank page?
 Browsers **do not run this site from a file on your disk**. Double-clicking
@@ -184,7 +193,10 @@ wedding-invitation/
 │   │   ├── Ceremony.jsx        The animated mandapam wedding story
 │   │   ├── Events.jsx          Event cards, maps, calendar
 │   │   ├── Gallery.jsx         "Our Moments" slideshow (2+ photos)
-│   │   ├── Closing.jsx         Family block, closing, share buttons
+│   │   ├── Closing.jsx         Closing message, share buttons
+│   │   ├── Kural.jsx           Thirukkural blessing + kolam
+│   │   ├── Travel.jsx          How to reach / bus route planner
+│   │   ├── Songs.jsx           Wedding songs playlist (YouTube or MP3)
 │   │   ├── MusicPlayer.jsx     Tamil song playlist player
 │   │   └── Ornaments.jsx       Toran, arch, bells, diya, peacock feather SVGs
 │   ├── config/wedding.js       ★ all wedding information

@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useLang, LangSwitch } from "../i18n.jsx";
+import { wedding } from "../config/wedding.js";
 import { Monogram, Divider, Feather } from "./Ornaments.jsx";
 import { reducedMotion } from "../utils/helpers.js";
 
@@ -93,7 +94,7 @@ export default function Opening({ onOpen, onDone }) {
         <button ref={btn} className="seal" onClick={open} aria-label="Open the invitation">
           <span className="seal-half l" />
           <span className="seal-half r" />
-          <Monogram className="seal-mono" a="S" b="S" />
+          <Monogram className="seal-mono" a={wedding.monogram[0]} b={wedding.monogram[1]} />
           <span className="seal-ring" />
         </button>
       </div>

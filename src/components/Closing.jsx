@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react";
-import { Share2, Link2, Phone, Check } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Share2, Link2, Check } from "lucide-react";
 import { wedding } from "../config/wedding.js";
 import { useLang } from "../i18n.jsx";
-import { Divider, Diya } from "./Ornaments.jsx";
+import { Divider, Diya, MonogramBadge, FairyLights } from "./Ornaments.jsx";
+import { showerFlowers } from "./FlowerShower.jsx";
 
 const { site } = wedding;
 
@@ -16,8 +17,14 @@ function WhatsAppIcon() {
 
 export default function Closing() {
   const { t, lang } = useLang();
-  const { hosts, closing, ui, groom, bride } = t;
+  const { closing, ui, groom, bride } = t;
   const [copied, setCopied] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const io = new IntersectionObserver(([e]) => e.isIntersecting && (showerFlowers(), io.disconnect()), { threshold: 0.5 });
+    ref.current && io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
 
   const base = typeof window !== "undefined" ? site.url || window.location.href.split(/[?#]/)[0] : site.url;
   const url = `${base}?lang=${lang}`;
@@ -48,29 +55,8 @@ export default function Closing() {
   };
 
   return (
-    <>
-      <section className="section hosts">
-        <p className="eyebrow tamil">{hosts.eyebrow}</p>
-        <h2 className="section-title tamil">{hosts.title}</h2>
-        <Divider />
-        <div className="host-list tamil reveal">
-          {hosts.people.map((h) => (
-            <div key={h.name} className="host">
-              <p className="host-name">{h.name}</p>
-              {h.line && <p className="host-line">{h.line}</p>}
-            </div>
-          ))}
-          {hosts.place && <p className="host-place">{hosts.place}</p>}
-          {wedding.showPhone && wedding.hostPhone && (
-            <a className="btn" href={`tel:${wedding.hostPhone}`}>
-              <Phone size={15} /> {ui.call}
-            </a>
-          )}
-        </div>
-        <p className="hosts-note tamil">{hosts.note}</p>
-      </section>
-
-      <footer className="section velvet closing">
+          <footer ref={ref} className="section velvet closing">
+        <FairyLights className="top" count={18} />
         <div className="velvet-pattern" aria-hidden="true" />
         <div className="lanterns" aria-hidden="true">
           {lanterns.map((l) => (
@@ -80,6 +66,7 @@ export default function Closing() {
         <Diya className="close-diya" />
         <p className="tamil close-ta">{closing.line1}</p>
         {closing.line2 && <p className="close-en tamil">{closing.line2}</p>}
+        <MonogramBadge className="small" a={wedding.monogram[0]} b={wedding.monogram[1]} onClick={showerFlowers} />
         <p className="close-names">
           <span className="script nick gold-foil">{groom.short}</span>
           <span className="close-amp">&amp;</span>
@@ -99,6 +86,5 @@ export default function Closing() {
         </div>
         <p className="fine tamil">{closing.fine}</p>
       </footer>
-    </>
   );
 }

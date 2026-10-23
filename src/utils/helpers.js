@@ -38,7 +38,7 @@ export function googleCalendarUrl(ev, lang = "en") {
 
 export function downloadIcs(events, lang = "en") {
   const esc = (s) => String(s).replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n");
-  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//SethuWedsSudha//EN", "CALSCALE:GREGORIAN"];
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//SethuramanWedsRagasudha//EN", "CALSCALE:GREGORIAN"];
   for (const ev of events) {
     lines.push(
       "BEGIN:VEVENT",

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { wedding } from "../config/wedding.js";
 import { useLang } from "../i18n.jsx";
 import { timeLeft } from "../utils/helpers.js";
+import { FairyLights } from "./Ornaments.jsx";
 
 const { countdownTo } = wedding;
 const wedEnd = wedding.events.find((e) => e.id === "wedding")?.end;
@@ -34,6 +35,7 @@ export default function Countdown() {
   return (
     <section className="section velvet countdown">
       <div className="velvet-pattern" aria-hidden="true" />
+      <FairyLights className="top" />
       <p className="eyebrow light tamil">{c.eyebrow}</p>
       <h2 className="section-title light tamil">{c.title}</h2>
       {left.ms > 0 ? (

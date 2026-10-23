@@ -8,6 +8,10 @@ import Ceremony from "./components/Ceremony.jsx";
 import Events from "./components/Events.jsx";
 import Gallery from "./components/Gallery.jsx";
 import Closing from "./components/Closing.jsx";
+import Kural from "./components/Kural.jsx";
+import Travel from "./components/Travel.jsx";
+import Songs from "./components/Songs.jsx";
+import FlowerShower, { showerFlowers } from "./components/FlowerShower.jsx";
 import MusicPlayer, { music } from "./components/MusicPlayer.jsx";
 import { reducedMotion } from "./utils/helpers.js";
 import { LangProvider, LangSwitch, useLang } from "./i18n.jsx";
@@ -89,10 +93,12 @@ function Invitation_() {
           <Opening
             onOpen={() => {
               setOpened(true);
+              setTimeout(showerFlowers, 1300);
               if (wedding.music.playOnOpen) music.start();
             }}
             onDone={() => {
               setCoverGone(true);
+              setTimeout(showerFlowers, 400);
               main.current?.focus({ preventScroll: true });
             }}
           />
@@ -100,12 +106,16 @@ function Invitation_() {
         <main ref={main} tabIndex={-1} className={`site ${opened ? "is-open" : ""}`}>
           <Hero />
           <Invitation />
+          <Kural />
           <Countdown />
           <Ceremony />
           <Events />
+          <Travel />
+          <Songs />
           <Gallery />
           <Closing />
         </main>
+        <FlowerShower />
         {opened && <MusicPlayer />}
         {coverGone && <LangSwitch className="float-lang" key={lang} />}
       </div>

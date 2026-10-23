@@ -2,23 +2,42 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { Play, Pause, SkipForward, SkipBack, Music2 } from "lucide-react";
 import { wedding } from "../config/wedding.js";
 import { playlist } from "../utils/helpers.js";
+import { useLang } from "../i18n.jsx";
 
-/* A tiny audio controller that lives outside React so that start() can run
-   synchronously inside the "open" tap (browsers only allow sound after a tap). */
-const tracks = playlist();
-const audio = typeof Audio !== "undefined" ? new Audio() : null;
-let state = { index: 0, playing: false };
+/* ===================================================================
+   Music controller (lives outside React so start() can run inside the
+   "open" tap — browsers only allow sound after a tap).
+
+   Two engines:
+     local   → your own MP3s from public/music (most reliable)
+     youtube → official YouTube uploads of Tamil wedding songs, played in
+               YouTube's own player inside the "Wedding Songs" section
+   =================================================================== */
+const localTracks = playlist();
+const ytTracks = wedding.music.youtube || [];
+export const MODE = localTracks.length ? "local" : ytTracks.length ? "youtube" : "none";
+export const tracks =
+  MODE === "local"
+    ? localTracks.map((t) => ({ ...t, ta: t.title, en: t.title, movie: t.subtitle }))
+    : ytTracks;
+
+let state = { index: 0, playing: false, ready: MODE === "local", blocked: false };
 const subs = new Set();
 const set = (patch) => {
   state = { ...state, ...patch };
   subs.forEach((f) => f());
 };
-let fadeTimer;
+export const useMusic = () =>
+  useSyncExternalStore(
+    (f) => (subs.add(f), () => subs.delete(f)),
+    () => state,
+  );
 
-function load(i) {
-  if (!audio || !tracks.length) return;
-  const t = tracks[(i + tracks.length) % tracks.length];
-  set({ index: (i + tracks.length) % tracks.length });
+/* ---------------- local audio engine ---------------- */
+const audio = MODE === "local" && typeof Audio !== "undefined" ? new Audio() : null;
+let fadeTimer;
+function loadLocal(i) {
+  const t = tracks[i];
   audio.src = t.src;
   audio.preload = "auto";
   if (t.startAt) {
@@ -29,48 +48,115 @@ function load(i) {
     audio.addEventListener("loadedmetadata", seek);
   }
 }
-
 function fadeIn() {
-  if (!audio) return;
   clearInterval(fadeTimer);
-  const target = wedding.music.volume ?? 0.8;
+  const target = wedding.music.volume ?? 0.85;
   audio.volume = 0;
   fadeTimer = setInterval(() => {
     audio.volume = Math.min(target, audio.volume + 0.04);
     if (audio.volume >= target) clearInterval(fadeTimer);
   }, 80);
 }
+if (audio) {
+  audio.addEventListener("ended", () => music.skip(1));
+  audio.addEventListener("error", () => tracks.length > 1 && setTimeout(() => music.skip(1), 400));
+  audio.addEventListener("pause", () => set({ playing: false }));
+  audio.addEventListener("play", () => set({ playing: true, blocked: false }));
+}
 
+/* ---------------- YouTube engine ---------------- */
+let yt = null;
+let pendingPlay = false;
+let errorsInRow = 0;
+function loadYTApi() {
+  if (window.YT?.Player) return Promise.resolve();
+  return new Promise((res) => {
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      prev?.();
+      res();
+    };
+    if (!document.getElementById("yt-api")) {
+      const s = document.createElement("script");
+      s.id = "yt-api";
+      s.src = "https://www.youtube.com/iframe_api";
+      document.head.appendChild(s);
+    }
+  });
+}
+/** Called by the Songs section with the element that hosts the video. */
+export function mountYouTube(el) {
+  if (MODE !== "youtube" || yt || !el) return;
+  loadYTApi().then(() => {
+    yt = new window.YT.Player(el, {
+      videoId: tracks[state.index].id,
+      width: "100%",
+      height: "100%",
+      playerVars: { playsinline: 1, rel: 0, modestbranding: 1 },
+      events: {
+        onReady: () => {
+          set({ ready: true });
+          yt.setVolume(Math.round((wedding.music.volume ?? 0.85) * 100));
+          if (pendingPlay) {
+            pendingPlay = false;
+            yt.playVideo();
+            setTimeout(() => !state.playing && set({ blocked: true }), 2500);
+          }
+        },
+        onStateChange: (e) => {
+          if (e.data === 1) {
+            errorsInRow = 0;
+            set({ playing: true, blocked: false });
+          } else if (e.data === 2) set({ playing: false });
+          else if (e.data === 0) music.skip(1);
+        },
+        onError: () => {
+          errorsInRow += 1;
+          if (errorsInRow < tracks.length) music.skip(1);
+        },
+      },
+    });
+  });
+}
+
+/* ---------------- public controls ---------------- */
 export const music = {
-  has: tracks.length > 0,
+  has: MODE !== "none",
   start() {
-    if (!audio || !tracks.length) return;
-    if (!audio.src) load(0);
-    fadeIn();
-    audio.play().then(() => set({ playing: true })).catch(() => set({ playing: false }));
+    if (MODE === "local") {
+      if (!audio.src) loadLocal(state.index);
+      fadeIn();
+      audio.play().catch(() => set({ playing: false, blocked: true }));
+    } else if (MODE === "youtube") {
+      if (yt && state.ready) {
+        yt.playVideo();
+        setTimeout(() => !state.playing && set({ blocked: true }), 2500);
+      } else pendingPlay = true;
+    }
+  },
+  pause() {
+    if (MODE === "local") audio.pause();
+    else yt?.pauseVideo?.();
   },
   toggle() {
-    if (!audio) return;
-    if (audio.paused) music.start();
-    else {
-      audio.pause();
-      set({ playing: false });
+    state.playing ? music.pause() : music.start();
+  },
+  select(i) {
+    const n = (i + tracks.length) % tracks.length;
+    set({ index: n });
+    if (MODE === "local") {
+      loadLocal(n);
+      music.start();
+    } else if (yt && state.ready) {
+      yt.loadVideoById(tracks[n].id);
     }
   },
   skip(d) {
-    load(state.index + d);
-    music.start();
+    music.select(state.index + d);
   },
 };
 
-if (audio) {
-  audio.addEventListener("ended", () => music.skip(1));
-  audio.addEventListener("error", () => {
-    if (tracks.length > 1) setTimeout(() => music.skip(1), 400);
-    else set({ playing: false });
-  });
-  audio.addEventListener("pause", () => set({ playing: false }));
-  audio.addEventListener("play", () => set({ playing: true }));
+if (typeof document !== "undefined" && audio) {
   document.addEventListener("visibilitychange", () => {
     if (document.hidden && !audio.paused) {
       audio.pause();
@@ -82,35 +168,38 @@ if (audio) {
   });
 }
 
-const useMusic = () =>
-  useSyncExternalStore(
-    (f) => (subs.add(f), () => subs.delete(f)),
-    () => state,
-  );
-
+/* ---------------- floating gold disc ---------------- */
 export default function MusicPlayer() {
-  const { index, playing } = useMusic();
+  const { index, playing, blocked } = useMusic();
+  const { lang } = useLang();
   const [open, setOpen] = useState(false);
+
   useEffect(() => {
-    if (!playing) return;
+    if (!playing && !blocked) return;
     setOpen(true);
+    if (blocked) return;
     const t = setTimeout(() => setOpen(false), 4500);
     return () => clearTimeout(t);
-  }, [index, playing]);
+  }, [index, playing, blocked]);
 
-  if (!tracks.length) return null;
+  if (MODE === "none") return null;
   const t = tracks[index];
+  const title = lang === "ta" ? t.ta : t.en;
 
   return (
-    <div className={`player ${open ? "open" : ""} ${playing ? "playing" : ""}`}>
-      <button className="disc" onClick={() => setOpen((o) => !o)} aria-label={open ? "Hide song details" : "Show song details"}>
+    <div className={`player ${open ? "open" : ""} ${playing ? "playing" : ""} ${blocked ? "blocked" : ""}`}>
+      <button
+        className="disc"
+        onClick={() => (blocked ? music.start() : setOpen((o) => !o))}
+        aria-label={open ? "Hide song details" : "Show song details"}
+      >
         <span className="disc-label">
           <Music2 size={14} />
         </span>
       </button>
       <div className="player-info" aria-live="polite">
-        <span className="tamil p-title">{t.title}</span>
-        {t.subtitle && <span className="p-sub">{t.subtitle}</span>}
+        <span className="tamil p-title">{blocked ? (lang === "ta" ? "▶ பாடலை இயக்க தொடவும்" : "▶ Tap to play music") : title}</span>
+        {!blocked && t.movie && <span className="p-sub">{t.movie}</span>}
       </div>
       <div className="player-ctrls">
         {tracks.length > 1 && (
