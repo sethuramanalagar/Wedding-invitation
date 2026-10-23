@@ -13,9 +13,9 @@ function Mandapam({ roof }) {
       <GoldDefs id={g} />
       <defs>
         <linearGradient id="mg-pillar" x1="0" x2="1">
-          <stop offset="0" stopColor="#7a1a2c" />
-          <stop offset=".5" stopColor="#a8323f" />
-          <stop offset="1" stopColor="#5a0f1f" />
+          <stop offset="0" style={{ stopColor: "var(--v2)" }} />
+          <stop offset=".5" style={{ stopColor: "var(--v1)" }} />
+          <stop offset="1" style={{ stopColor: "var(--v3)" }} />
         </linearGradient>
         <radialGradient id="mg-floor" cx=".5" cy="0" r="1">
           <stop offset="0" stopColor="#f6e7c4" />
@@ -61,12 +61,12 @@ function Mandapam({ roof }) {
       ))}
 
       {/* roof */}
-      <path d="M0 30 H400 V78 H0Z" fill="#6b1426" />
+      <path d="M0 30 H400 V78 H0Z" style={{ fill: "var(--v2)" }} />
       <path d="M0 74 H400" stroke={`url(#${g})`} strokeWidth="5" />
       <path d="M0 34 H400" stroke={`url(#${g})`} strokeWidth="3" />
       <path
         d={`M0 78 ${Array.from({ length: 20 }).map((_, i) => `Q${i * 20 + 10} 96 ${i * 20 + 20} 78`).join(" ")}`}
-        fill="#6b1426"
+        style={{ fill: "var(--v2)" }}
         stroke={`url(#${g})`}
         strokeWidth="1.5"
       />

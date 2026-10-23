@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { useLang, LangSwitch } from "../i18n.jsx";
+import { MoodSwatches } from "../theme.jsx";
 import { wedding } from "../config/wedding.js";
 import { Monogram, Divider, Feather } from "./Ornaments.jsx";
 import { reducedMotion } from "../utils/helpers.js";
@@ -100,6 +101,10 @@ export default function Opening({ onOpen, onDone }) {
       </div>
 
       <p className="op-hint">{t.cover.hint}</p>
+      <div className="op-mood">
+        <p className="tamil">{t.mood.title}</p>
+        <MoodSwatches compact />
+      </div>
 
       <footer className="op-names">
         <span className="tamil">{groom.name}</span>

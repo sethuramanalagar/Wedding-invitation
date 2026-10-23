@@ -10,6 +10,20 @@ export const wedding = {
 
   monogram: ["S", "R"], // shown on the wax seal and above the names
 
+  /**
+   * MOOD THEMES — guests pick the mood they feel and the whole invitation
+   * changes colour. Colours are defined in src/index.css under [data-theme=…].
+   */
+  themes: [
+    { id: "royal", emoji: "👑", ta: "ராஜ கம்பீரம்", en: "Royal", swatch: ["#6b1426", "#e9c46a"] },
+    { id: "temple", emoji: "🪔", ta: "பக்தி", en: "Devotional", swatch: ["#8a3b0c", "#f2c14e"] },
+    { id: "peacock", emoji: "🦚", ta: "மகிழ்ச்சி", en: "Joyful", swatch: ["#0e5a5a", "#e9c46a"] },
+    { id: "rose", emoji: "🌹", ta: "காதல்", en: "Romantic", swatch: ["#9b2b55", "#f3c7a0"] },
+    { id: "sapphire", emoji: "🌙", ta: "அமைதி", en: "Calm", swatch: ["#1d2f6b", "#d9c27a"] },
+    { id: "emerald", emoji: "🌿", ta: "இயற்கை", en: "Fresh", swatch: ["#165c35", "#e9c46a"] },
+  ],
+  defaultTheme: "royal",
+
   site: {
     title: "Sethuraman weds Ragasudha · 13 November 2026",
     description:
@@ -73,6 +87,8 @@ export const wedding = {
      */
     youtube: [
       { id: "9rxMk64fJvk", ta: "ஆஹா கல்யாணம்", en: "Aaha Kalyanam", movie: "Petta" },
+      { id: "cS-eTcE5pPo", ta: "மணப்பெண்ணின் சத்தியம்", en: "Manapennin Sathiyam", movie: "Kochadaiiyaan" },
+      { id: "R5Wa9J3Whis", ta: "மணமகனின் சத்தியம்", en: "Manamaganin Sathiyam", movie: "Kochadaiiyaan" },
       { id: "hoFFQ0bVqZY", ta: "கல்யாண மாலை", en: "Kalyaana Maalai", movie: "Pudhu Pudhu Arthangal" },
       { id: "wkB69vKHUi8", ta: "யாரோ யாரோடி", en: "Yaaro Yaarodi", movie: "Alaipayuthey" },
       { id: "T0F_LpEjKbY", ta: "மருதாணி", en: "Marudaani", movie: "Sakkarakatti" },
@@ -224,6 +240,8 @@ export const wedding = {
       galleryTitle: "நினைவுகள்",
       galleryEyebrow: "Our Moments",
 
+      mood: { title: "உங்கள் மனநிலை என்ன?", sub: "நிறத்தைத் தேர்ந்தெடுங்கள்", button: "மனநிலை நிறம்" },
+
       kural: {
         eyebrow: "திருக்குறள் · 45",
         lines: ["அன்பும் அறனும் உடைத்தாயின் இல்வாழ்க்கை", "பண்பும் பயனும் அது"],
@@ -368,6 +386,8 @@ export const wedding = {
 
       galleryTitle: "Our Moments",
       galleryEyebrow: "நினைவுகள்",
+
+      mood: { title: "How are you feeling?", sub: "Pick a mood — the invitation changes colour", button: "Mood colours" },
 
       kural: {
         eyebrow: "Thirukkural · 45",

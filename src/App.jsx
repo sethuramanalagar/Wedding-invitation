@@ -15,6 +15,7 @@ import FlowerShower, { showerFlowers } from "./components/FlowerShower.jsx";
 import MusicPlayer, { music } from "./components/MusicPlayer.jsx";
 import { reducedMotion } from "./utils/helpers.js";
 import { LangProvider, LangSwitch, useLang } from "./i18n.jsx";
+import { ThemeProvider, MoodButton } from "./theme.jsx";
 
 /* Fade/slide sections in as they scroll into view */
 function useReveal(active) {
@@ -61,7 +62,9 @@ function usePetalTap(active) {
 export default function App() {
   return (
     <LangProvider>
-      <Invitation_ />
+      <ThemeProvider>
+        <Invitation_ />
+      </ThemeProvider>
     </LangProvider>
   );
 }
@@ -118,6 +121,7 @@ function Invitation_() {
         <FlowerShower />
         {opened && <MusicPlayer />}
         {coverGone && <LangSwitch className="float-lang" key={lang} />}
+        {coverGone && <MoodButton />}
       </div>
 
       <aside className="side side-r" aria-hidden="true">

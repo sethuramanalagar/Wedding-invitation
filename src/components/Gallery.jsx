@@ -37,7 +37,7 @@ export default function Gallery() {
         }}
       >
         {photos.map((p, k) => (
-          <figure key={p.src} className={`gal-slide ${k === i ? "on" : ""}`} aria-hidden={k !== i}>
+          <figure key={p.src} className={`gal-slide ${k === i ? "on" : ""}`} aria-hidden={k !== i} style={{ "--bg": `url("${p.src}")` }}>
             <img src={p.src} alt={p.alt} loading="lazy" />
             {p.credit && <figcaption>📷 {p.credit}</figcaption>}
           </figure>

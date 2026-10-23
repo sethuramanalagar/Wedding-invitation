@@ -79,6 +79,16 @@ Without `?lang=`, the site opens in `defaultLang` (Tamil) from
 and `content.en` in that file. The Share / WhatsApp buttons send the link in
 the language the guest is viewing.
 
+## Mood themes
+
+Guests choose how they feel, and the whole invitation changes colour:
+👑 Royal (maroon), 🪔 Devotional (saffron), 🦚 Joyful (peacock teal),
+🌹 Romantic (rose), 🌙 Calm (sapphire), 🌿 Fresh (emerald).
+The choice is on the envelope screen and in the palette button (bottom-left),
+and it is remembered on the guest's phone. A link can open in a theme:
+`?theme=rose`. Themes are listed in `themes` in `src/config/wedding.js`, and
+their colours are under `[data-theme=…]` in `src/index.css`.
+
 ## C. Music: Tamil songs
 
 The site has **two ways** to play music. It picks one automatically.
@@ -88,7 +98,7 @@ The site has **two ways** to play music. It picks one automatically.
    in file names are fine. To show a Tamil title or skip an intro, list the file
    in `music.tracks` in `src/config/wedding.js`.
 2. **Tamil wedding songs from YouTube**, used when the music folder is empty.
-   Nine official uploads (Aaha Kalyanam, Kalyaana Maalai, Yaaro Yaarodi,
+   Eleven official uploads (Aaha Kalyanam, Manapennin Sathiyam, Manamaganin Sathiyam, Kalyaana Maalai, Yaaro Yaarodi,
    Marudaani, Kannalane, Munbe Vaa, Nenjukkul Peidhidum, Unakkenna Venum Sollu,
    Maruvaarthai) are listed in `music.youtube`. They play in YouTube's own
    player inside the **Wedding Songs** section. Guests can pick any song, and the
